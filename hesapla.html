@@ -15,8 +15,11 @@
 <meta property="og:url" content="https://fondefterim.com/hesapla.html">
 <meta property="og:site_name" content="Fon Defterim">
 <meta property="og:locale" content="tr_TR">
-<link rel="icon" href="img/simge.svg" type="image/svg+xml">
-<link rel="stylesheet" href="stil.css?v=20261114c">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon-96.png" type="image/png" sizes="96x96">
+<link rel="icon" href="/img/simge.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="stil.css?v=20261114d">
 </head>
 <body>
 
@@ -57,8 +60,8 @@
       <label id="drop" class="drop" for="file">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4m0 0L8 8m4-4 4 4M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span class="drop-title">Excel, CSV ya da PDF ekstreni seç</span>
-        <span class="muted small">ya da buraya sürükle · en fazla 15 MB</span>
-        <input id="file" type="file" accept=".xlsx,.csv,.txt,.pdf,text/csv,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+        <span class="muted small">ya da buraya sürükle · birden fazla PDF ekstre seçebilirsin · dosya başına en fazla 15 MB</span>
+        <input id="file" type="file" multiple accept=".xlsx,.csv,.txt,.pdf,text/csv,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
       </label>
       <p id="fileStatus" class="muted small" aria-live="polite">Aracı kurum PDF ekstreleri (Midas ve benzerleri), Fon Mağduru Hesap Defteri (Excel) biçimi ve <a href="sablon/islemler-sablonu.csv" download>Fon Defterim şablonu</a> doğrudan tanınır. Başka tablolarda sütunları aşağıdan seçebilirsin.</p>
 
@@ -135,6 +138,6 @@
 
 <script src="fon-listesi.js?v=20261114c"></script>
 <script src="pdf-ekstre.js?v=20261114c"></script>
-<script src="hesapla.js?v=20261114c"></script>
+<script src="hesapla.js?v=20261114d"></script>
 </body>
 </html>

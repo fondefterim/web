@@ -380,7 +380,7 @@
       const isZip = buf.byteLength > 4 && new DataView(buf).getUint32(0, true) === 0x04034b50;
       if (/\.xls$/i.test(file.name) && !isZip) throw new Error('Eski Excel biçimi (.xls) okunamıyor. Dosyayı Excel\'de "Farklı Kaydet → .xlsx" ya da CSV olarak kaydet.');
       const isPDF = buf.byteLength > 4 && new TextDecoder().decode(new Uint8Array(buf, 0, 5)) === '%PDF-';
-      if (isPDF || /\.pdf$/i.test(file.name)) { await openPDF(file, buf); return; }
+      if (isPDF || /\.pdf$/i.test(file.name)) { await openPDFs([{ file, buf }]); return; }
       sheets = isZip ? await readXLSX(buf) : readCSV(new TextDecoder().decode(buf));
       sheets = sheets.filter(s => s.rows.length);
       if (!sheets.length) throw new Error('Dosyada okunabilir bir tablo bulunamadı.');
@@ -402,33 +402,74 @@
     }
   }
 
-  // PDF ekstre: satırlardan işlemleri bulur (pdf-ekstre.js), sonuç Excel'deki gibi hesaplanır.
-  async function openPDF(file, buf) {
+  // PDF ekstre(ler): satırlardan işlemleri bulur (pdf-ekstre.js), sonuç Excel'deki gibi hesaplanır.
+  // Birden fazla ekstre seçilebilir (ör. her ay ya da her aracı kurum ayrı); aynı işlem iki kez sayılmaz.
+  async function openPDFs(list) {
     const status = $('fileStatus');
     if (!window.FonPDF) throw new Error('PDF okuyucu yüklenemedi. Sayfayı yenileyip tekrar dene.');
-    status.textContent = `${file.name} okunuyor… (ilk PDF'te okuyucu birkaç saniyede yüklenir)`;
-    const { lines, pages } = await window.FonPDF.readLines(buf);
-    const r = window.FonPDF.scan(lines, window.FON_LISTESI || [], num);
+    const trades = [], seen = new Set(), others = new Set(), brokers = new Set();
+    let pages = 0, unread = 0, dup = 0, row = 0;
+    for (let k = 0; k < list.length; k++) {
+      const { file, buf } = list[k];
+      status.textContent = `${list.length > 1 ? `${k + 1}/${list.length} · ` : ''}${file.name} okunuyor… (ilk PDF'te okuyucu birkaç saniyede yüklenir)`;
+      let res;
+      try { res = await window.FonPDF.readLines(buf); }
+      catch (e) { throw new Error(`${file.name}: ${e.message || 'okunamadı'}`); }
+      pages += res.pages;
+      const r = window.FonPDF.scan(res.lines, window.FON_LISTESI || [], num);
+      if (r.broker) brokers.add(r.broker);
+      r.others.forEach(o => others.add(o));
+      unread += r.unread.length;
+      for (const c of r.candidates) {
+        const key = [c.date, c.code, c.side, Math.round(c.units * 1e4), Math.round(c.amount * 100), r.broker || ''].join('|');
+        if (seen.has(key)) { dup++; continue; }
+        seen.add(key);
+        trades.push({
+          row: ++row, date: showDate(c.date), code: c.code,
+          side: c.side === 'buy' ? 'Alış' : c.side === 'sell' ? 'Satış' : '',
+          units: c.units, price: c.price, amount: c.amount, broker: r.broker || '',
+        });
+      }
+    }
     sheets = [];
-    fixed = {
-      trades: r.candidates.map(c => ({
-        row: c.line, date: showDate(c.date), code: c.code,
-        side: c.side === 'buy' ? 'Alış' : c.side === 'sell' ? 'Satış' : '',
-        units: c.units, price: c.price, amount: c.amount, broker: r.broker || '',
-      })),
-      payments: [],
-    };
+    fixed = { trades, payments: [] };
     compute.prefilled = false;
     Object.keys(paidByFund).forEach(k => delete paidByFund[k]);
     $('mapWrap').hidden = true;
-    const found = r.candidates.filter(c => c.code).length;
-    const bits = [`<b>${esc(file.name)}</b> okundu (${pages} sayfa${r.broker ? ', ' + esc(r.broker) : ''}). Dosya bu cihazdan çıkmadı.`,
+    const found = trades.filter(t => t.code).length;
+    const what = list.length > 1 ? `${list.length} ekstre` : `<b>${esc(list[0].file.name)}</b>`;
+    const bits = [`${what} okundu (${pages} sayfa${brokers.size ? ', ' + esc([...brokers].join(', ')) : ''}). Dosya bu cihazdan çıkmadı.`,
       found ? `Tasfiyedeki fonlarda <b>${found}</b> işlem bulundu; aşağıdaki tabloyu ekstrenle karşılaştır.`
             : 'Tasfiyedeki fonlarda işlem bulunamadı. Ekstrede bu fonlar yoksa sonuç boş çıkar.'];
-    if (r.others.length) bits.push(`Listede olmayan ${r.others.length} kıymet (ör. ${esc(r.others.slice(0, 4).join(', '))}) hesaba katılmadı.`);
-    if (r.unread.length) bits.push(`${r.unread.length} satır işleme çevrilemedi (virman, masraf, bakiye gibi).`);
+    if (dup) bits.push(`Birden fazla ekstrede geçen ${dup} işlem bir kez sayıldı.`);
+    if (others.size) bits.push(`Listede olmayan ${others.size} kıymet (ör. ${esc([...others].slice(0, 4).join(', '))}) hesaba katılmadı.`);
+    if (unread) bits.push(`${unread} satır işleme çevrilemedi (virman, masraf, bakiye gibi).`);
     status.innerHTML = bits.join(' ');
     compute();
+  }
+
+  // Birden çok dosya: yalnızca PDF ekstreler birlikte okunur.
+  async function openFiles(files) {
+    files = [...(files || [])];
+    if (files.length <= 1) return openFile(files[0]);
+    const status = $('fileStatus');
+    $('result').hidden = true; $('download').hidden = true;
+    const pdfs = files.filter(f => /\.pdf$/i.test(f.name) || f.type === 'application/pdf');
+    if (!pdfs.length) {
+      status.innerHTML = '<span class="warnline">Birden fazla dosya yalnızca PDF ekstreler için seçilebilir. Excel ya da CSV için tek dosya seç.</span>';
+      return;
+    }
+    if (pdfs.length > 24) { status.innerHTML = '<span class="warnline">Tek seferde en fazla 24 PDF seçebilirsin.</span>'; return; }
+    if (pdfs.some(f => f.size > MAX_FILE)) { status.innerHTML = '<span class="warnline">Dosyalardan biri çok büyük (en fazla 15 MB).</span>'; return; }
+    fileName = pdfs.length + ' ekstre';
+    try {
+      const list = [];
+      for (const file of pdfs) list.push({ file, buf: await file.arrayBuffer() });
+      await openPDFs(list);
+      if (pdfs.length < files.length) status.innerHTML += ' <span class="warnline">PDF olmayan dosyalar atlandı.</span>';
+    } catch (e) {
+      status.innerHTML = `<span class="warnline">${esc(e.message || 'Dosya okunamadı.')}</span>`;
+    }
   }
 
   // Okunan işlemleri Fon Defterim şablonu biçiminde indir (uygulamaya aktarmak için).
@@ -480,10 +521,10 @@
   // ---------- Başlat ----------
   document.addEventListener('DOMContentLoaded', () => {
     const input = $('file'), drop = $('drop');
-    input.addEventListener('change', () => openFile(input.files[0]));
+    input.addEventListener('change', () => openFiles(input.files));
     ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
     ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
-    drop.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) openFile(f); });
+    drop.addEventListener('drop', e => { if (e.dataTransfer.files.length) openFiles(e.dataTransfer.files); });
     $('clear').addEventListener('click', () => {
       input.value = ''; sheets = []; fixed = null; $('result').hidden = true; $('mapWrap').hidden = true; $('download').hidden = true;
       $('fileStatus').textContent = 'Dosya kaldırıldı.';

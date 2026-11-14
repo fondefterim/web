@@ -557,3 +557,20 @@ a.store-badge:hover { transform: translateY(-1px); }
   .ff-list [role="option"] span, .ff-list li.none { color: #b7c6c1; }
   .ff-list [role="option"][aria-selected="true"] a, .ff-list [role="option"] a:hover { background: #1f2f2b; }
 }
+
+/* Fonlar: kurucuya göre kartlar */
+.mgr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; align-items: start; }
+.mgr-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.mgr-card header { padding: 16px 18px 12px; border-bottom: 1px solid var(--line);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand) 12%, var(--surface)), var(--surface)); }
+.mgr-card h2 { margin: 0; font-size: 19px; }
+.mgr-card header p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+.mgr-list { display: grid; }
+.mgr-fund { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 18px;
+  text-decoration: none; color: var(--text); border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); transition: background .15s ease; }
+.mgr-fund:first-child { border-top: 0; }
+.mgr-fund:hover, .mgr-fund:focus-visible { background: color-mix(in srgb, var(--brand) 7%, transparent); }
+.mgr-fund b { color: var(--brand); font-size: 15px; }
+.mgr-fund .nm { font-size: 14px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mgr-fund .pr { text-align: right; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.mgr-fund .pr small { display: block; font-weight: 400; color: var(--muted); font-size: 11px; }
