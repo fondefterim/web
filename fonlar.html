@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="Fon Defterim">
 <meta property="og:locale" content="tr_TR">
 <link rel="icon" href="img/simge.svg" type="image/svg+xml">
-<link rel="stylesheet" href="stil.css?v=20261113g">
+<link rel="stylesheet" href="stil.css?v=20261114a">
 </head>
 <body>
 
@@ -68,6 +68,7 @@
         <tbody><tr><td colspan="6" class="muted">Yükleniyor…</td></tr></tbody>
       </table>
     </div>
+    <p style="margin-top:14px"><a href="fon/">Her fonun ayrı sayfası →</a></p>
     <p class="muted" style="font-size:15px">Kaynak: SPK bültenleri ve TEFAS'ın herkese açık kayıtları; uygulamanın kullandığı listenin aynısı. Bilgi amaçlıdır, resmî kayıt yerine geçmez.</p>
   </div>
 </main>
@@ -90,8 +91,8 @@
   </div>
 </footer>
 
-<script src="ortak.js?v=20261113g"></script>
-<script src="veri.js?v=20261113g"></script>
+<script src="ortak.js?v=20261114a"></script>
+<script src="veri.js?v=20261114a"></script>
 <script>
 (async function () {
   const V = window.FonVeri;
@@ -114,7 +115,7 @@
     tbody.innerHTML = rows.map(f => {
       const is1609 = f.priceDate === '2026-09-16';
       return `<tr>
-        <td><b>${V.esc(f.code)}</b></td>
+        <td><a class="code" href="fon/${V.esc(f.code.toLowerCase())}.html">${V.esc(f.code)}</a></td>
         <td>${V.esc(f.name || '')}${f.note ? `<div class="muted small">${V.esc(f.note)}</div>` : ''}</td>
         <td class="small">${V.esc(f.status || '')}</td>
         <td class="n">${f.lastPrice != null ? V.fmt.format(f.lastPrice) : '–'}</td>
@@ -151,6 +152,12 @@
     calcValue();
   });
   [units, price].forEach(i => i.addEventListener('input', calcValue));
+  // Fon sayfasından "16.09 değerini hesapla" ile gelindiyse fonu seç.
+  const pre = new URLSearchParams(location.search).get('kod');
+  if (pre && funds.some(x => x.code === pre.toUpperCase())) {
+    sel.value = pre.toUpperCase(); sel.dispatchEvent(new Event('change'));
+    document.getElementById('value').scrollIntoView({ block: 'start' });
+  }
 })();
 </script>
 </body>
