@@ -558,6 +558,9 @@ a.store-badge:hover { transform: translateY(-1px); }
   .ff-list [role="option"][aria-selected="true"] a, .ff-list [role="option"] a:hover { background: #1f2f2b; }
 }
 
+/* Gizlenen öğe, kendi display kuralı olsa da gizli kalsın. */
+[hidden] { display: none !important; }
+
 /* Fonlar: kurucuya göre kartlar */
 .mgr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; align-items: start; }
 .mgr-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
