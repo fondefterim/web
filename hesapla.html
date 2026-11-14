@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Fon Defterim">
 <meta property="og:locale" content="tr_TR">
 <link rel="icon" href="img/simge.svg" type="image/svg+xml">
-<link rel="stylesheet" href="stil.css?v=20261114a">
+<link rel="stylesheet" href="stil.css?v=20261114b">
 </head>
 <body>
 
@@ -38,6 +38,7 @@
 
 <main class="page">
   <div class="wrap">
+    <div class="print-only print-head"><b>Fon Defterim · Net yatırım hesabı</b><span id="printDate"></span></div>
     <div class="calc-hero">
       <h1>Net yatırımını hesapla</h1>
       <p class="lead">Aracı kurum ekstrenden ya da Excel defterinden işlemlerini seç; fon fon ve aracı kurum bazında net yatırımını, gelen ödemeleri düşünce kalan alacağını hemen gör.</p>
@@ -72,6 +73,7 @@
         <div class="out" id="resultTotals"></div>
         <div id="resultNotes" class="small"></div>
         <div class="buttons" style="margin-top:14px">
+          <button class="btn primary" type="button" data-print><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v5h5M12 11v6m0 0-2.5-2.5M12 17l2.5-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>PDF olarak kaydet</button>
           <button class="btn ghost" type="button" id="download" hidden>İşlemleri şablon biçiminde indir</button>
           <button class="btn ghost" type="button" id="clear">Dosyayı kaldır</button>
         </div>
@@ -94,6 +96,8 @@
           </div>
           <div class="big" style="margin-top:6px"><span>Net yatırıma göre kalan alacak</span><span id="remaining">0 TL</span></div>
         </div>
+        <div class="buttons" style="margin-top:14px"><button class="btn primary" type="button" data-print><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v5h5M12 11v6m0 0-2.5-2.5M12 17l2.5-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>PDF olarak kaydet</button></div>
+        <p class="muted small no-print">Telefonda: "PDF olarak kaydet"e bas, açılan pencerede paylaş simgesinden Dosyalar'a kaydet. Bilgisayarda yazdırma penceresinde "PDF olarak kaydet"i seç. PDF de yalnızca senin cihazında oluşur.</p>
       </div>
     </section>
 
@@ -129,6 +133,6 @@
   </div>
 </footer>
 
-<script src="hesapla.js?v=20261114a"></script>
+<script src="hesapla.js?v=20261114b"></script>
 </body>
 </html>

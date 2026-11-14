@@ -459,6 +459,13 @@
       $('fileStatus').textContent = 'Dosya kaldırıldı.';
     });
     $('download').addEventListener('click', download);
+    // PDF: tarayıcının yazdırma penceresi (Kaydet → PDF). Hiçbir veri dışarı gönderilmez.
+    document.querySelectorAll('[data-print]').forEach(b => b.addEventListener('click', () => {
+      const d = new Date();
+      $('printDate').textContent = d.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' · fondefterim.com';
+      document.body.dataset.print = $('panelFile').hidden ? 'manual' : 'file';
+      window.print();
+    }));
     manualRow(); manualRow();
     $('add').addEventListener('click', () => { manualRow(); manual(); });
     $('manual').addEventListener('input', manual);
