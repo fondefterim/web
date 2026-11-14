@@ -1,5 +1,5 @@
 // Hızlı net yatırım hesabı. Dosya yalnızca bu tarayıcıda okunur; sayfanın güvenlik kuralı (CSP)
-// tarayıcının internete herhangi bir veri göndermesini zaten engeller. Dış kütüphane kullanılmaz.
+// tarayıcının internete herhangi bir veri göndermesini zaten engeller. PDF için yalnızca sitenin kendi pdf.js kopyası kullanılır.
 (function () {
   'use strict';
   const MAX_FILE = 15 * 1024 * 1024;     // yüklenecek dosya
@@ -379,7 +379,8 @@
       const buf = await file.arrayBuffer();
       const isZip = buf.byteLength > 4 && new DataView(buf).getUint32(0, true) === 0x04034b50;
       if (/\.xls$/i.test(file.name) && !isZip) throw new Error('Eski Excel biçimi (.xls) okunamıyor. Dosyayı Excel\'de "Farklı Kaydet → .xlsx" ya da CSV olarak kaydet.');
-      if (/\.pdf$/i.test(file.name)) throw new Error('PDF burada okunmuyor. PDF ekstreler için Fon Defterim uygulamasını kullanabilir ya da işlemleri şablona yazabilirsin.');
+      const isPDF = buf.byteLength > 4 && new TextDecoder().decode(new Uint8Array(buf, 0, 5)) === '%PDF-';
+      if (isPDF || /\.pdf$/i.test(file.name)) { await openPDF(file, buf); return; }
       sheets = isZip ? await readXLSX(buf) : readCSV(new TextDecoder().decode(buf));
       sheets = sheets.filter(s => s.rows.length);
       if (!sheets.length) throw new Error('Dosyada okunabilir bir tablo bulunamadı.');
@@ -399,6 +400,35 @@
     } catch (e) {
       status.innerHTML = `<span class="warnline">${esc(e.message || 'Dosya okunamadı.')}</span>`;
     }
+  }
+
+  // PDF ekstre: satırlardan işlemleri bulur (pdf-ekstre.js), sonuç Excel'deki gibi hesaplanır.
+  async function openPDF(file, buf) {
+    const status = $('fileStatus');
+    if (!window.FonPDF) throw new Error('PDF okuyucu yüklenemedi. Sayfayı yenileyip tekrar dene.');
+    status.textContent = `${file.name} okunuyor… (ilk PDF'te okuyucu birkaç saniyede yüklenir)`;
+    const { lines, pages } = await window.FonPDF.readLines(buf);
+    const r = window.FonPDF.scan(lines, window.FON_LISTESI || [], num);
+    sheets = [];
+    fixed = {
+      trades: r.candidates.map(c => ({
+        row: c.line, date: showDate(c.date), code: c.code,
+        side: c.side === 'buy' ? 'Alış' : c.side === 'sell' ? 'Satış' : '',
+        units: c.units, price: c.price, amount: c.amount, broker: r.broker || '',
+      })),
+      payments: [],
+    };
+    compute.prefilled = false;
+    Object.keys(paidByFund).forEach(k => delete paidByFund[k]);
+    $('mapWrap').hidden = true;
+    const found = r.candidates.filter(c => c.code).length;
+    const bits = [`<b>${esc(file.name)}</b> okundu (${pages} sayfa${r.broker ? ', ' + esc(r.broker) : ''}). Dosya bu cihazdan çıkmadı.`,
+      found ? `Tasfiyedeki fonlarda <b>${found}</b> işlem bulundu; aşağıdaki tabloyu ekstrenle karşılaştır.`
+            : 'Tasfiyedeki fonlarda işlem bulunamadı. Ekstrede bu fonlar yoksa sonuç boş çıkar.'];
+    if (r.others.length) bits.push(`Listede olmayan ${r.others.length} kıymet (ör. ${esc(r.others.slice(0, 4).join(', '))}) hesaba katılmadı.`);
+    if (r.unread.length) bits.push(`${r.unread.length} satır işleme çevrilemedi (virman, masraf, bakiye gibi).`);
+    status.innerHTML = bits.join(' ');
+    compute();
   }
 
   // Okunan işlemleri Fon Defterim şablonu biçiminde indir (uygulamaya aktarmak için).
