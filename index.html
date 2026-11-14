@@ -16,7 +16,7 @@
 <meta property="og:locale" content="tr_TR">
 <link rel="icon" href="img/simge.svg" type="image/svg+xml">
 <script>document.documentElement.classList.replace("no-js","js")</script>
-<link rel="stylesheet" href="stil.css?v=20261114b">
+<link rel="stylesheet" href="stil.css?v=20261114c">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebSite","name":"Fon Defterim","alternateName":"Fon Defterim – Tasfiye Takibi","url":"https://fondefterim.com/","inLanguage":"tr-TR",
  "description":"Tasfiyedeki fonlarda net yatırımını, tasfiyeden gelen ödemeleri ve kalan alacağını takip etmek için ücretsiz araç. Türkiye'deki fon mağdurları için, mağdurlar tarafından.",
@@ -52,6 +52,16 @@
           <a class="btn light big" href="hesapla.html"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M16 11v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Net yatırımını hemen hesapla</a>
           <a class="btn glass" href="net-yatirim.html">Nasıl hesaplanır?</a>
         </div>
+        <form class="fund-find" action="fonlar.html" method="get" role="search" autocomplete="off">
+          <label for="fundFind">Fonunun sayfasını bul</label>
+          <div class="ff-box">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <input id="fundFind" name="q" type="search" placeholder="Kod ya da ad yaz: TLY, Pusula, Atlas…" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="fundFindList" enterkeyhint="go" spellcheck="false">
+            <button type="submit" aria-label="Fon sayfasını aç"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <ul id="fundFindList" role="listbox" aria-label="Eşleşen fonlar" hidden></ul>
+          <p class="ff-hint">Durum, 16.09 fiyatı, SPK duyuruları ve KAP belgeleri</p>
+        </form>
         <div class="store-row">
           <span class="store-badge" id="storeBadge" aria-label="iPhone uygulaması App Store'da yakında">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 18.5h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -218,6 +228,8 @@
   </div>
 </footer>
 
+<script src="fon-listesi.js?v=20261114c"></script>
+<script src="fon-ara.js?v=20261114c"></script>
 <script src="ortak.js?v=20261114a"></script>
 <script src="veri.js?v=20261114a"></script>
 <script src="anim.js?v=20261114a"></script>
