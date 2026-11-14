@@ -40,7 +40,7 @@
     <p class="meta" id="updated">Liste yükleniyor…</p>
 
     <div class="notice" role="note" style="margin-bottom:24px">
-      <strong>Fiyatlar hakkında:</strong> Listedeki fiyat, her fon için bulunabilen son fiyattır. <b>Birçok fonda bu fiyat 16.09.2026'ya değil, tasfiye sonrası bir tarihe aittir</b> (tarih tabloda yazar). 16.09 değerini hesaplarken aracı kurum ekstrendeki 16.09.2026 fiyatını kullan.
+      <strong>Fiyatlar hakkında:</strong> Alacak, tasfiye kararından önceki son iş günü olan <b>16.09.2026 fiyatına</b> göre hesaplanır. "Son fiyat" sütunu ise tasfiye ödemeleriyle erimiş güncel fiyattır; hesapta kullanma. 16.09 fiyatlarının çoğu TEFAS verisini aktaran derlemelerden alındı; aracı kurum ekstrendeki fiyat farklıysa onu kullan.
     </div>
 
     <section class="panel calc" id="value" style="padding:24px;margin-bottom:28px">
@@ -64,7 +64,7 @@
     </div>
     <div class="table-scroll panel" style="padding:0">
       <table id="funds">
-        <thead><tr><th>Kod</th><th>Fon</th><th>Durum</th><th class="n">Son fiyat</th><th class="n">Fiyat tarihi</th><th class="n">Yatırımcı</th></tr></thead>
+        <thead><tr><th>Kod</th><th>Fon</th><th>Durum</th><th class="n">16.09 fiyatı</th><th class="n">Son fiyat</th><th class="n">Son fiyat tarihi</th><th class="n">Yatırımcı</th></tr></thead>
         <tbody><tr><td colspan="6" class="muted">Yükleniyor…</td></tr></tbody>
       </table>
     </div>
@@ -104,25 +104,34 @@
     document.getElementById('updated').textContent = `${funds.length} fon · liste güncellemesi: ${V.trDate(d.updated)}`;
   } catch (e) {
     document.getElementById('updated').textContent = 'Liste şu an yüklenemedi. Biraz sonra yeniden dene.';
-    tbody.innerHTML = '<tr><td colspan="6" class="muted">Liste yüklenemedi.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="muted">Liste yüklenemedi.</td></tr>';
     return;
   }
 
   const norm = s => String(s || '').toLocaleLowerCase('tr-TR');
+  // Uygulamayla aynı kural: listedeki 16.09 fiyatı; yoksa 16.09 ya da öncesine ait son fiyat.
+  // Tasfiye sonrası erimiş fiyat 16.09 fiyatı yerine asla kullanılmaz.
+  const REF = '2026-09-16';
+  function refPrice(f) {
+    if (f.price1609 > 0) return { price: f.price1609, date: REF, compiled: f.price1609Source === 'derleme' };
+    if (f.lastPrice > 0 && f.priceDate && f.priceDate <= REF) return { price: f.lastPrice, date: f.priceDate, compiled: false };
+    return null;
+  }
   function render() {
     const q = norm(document.getElementById('q').value.trim());
     const rows = funds.filter(f => !q || [f.code, f.name, f.manager, f.status].some(x => norm(x).includes(q)));
     tbody.innerHTML = rows.map(f => {
-      const is1609 = f.priceDate === '2026-09-16';
+      const ref = refPrice(f);
       return `<tr>
         <td><a class="code" href="fon/${V.esc(f.code.toLowerCase())}.html">${V.esc(f.code)}</a></td>
         <td>${V.esc(f.name || '')}${f.note ? `<div class="muted small">${V.esc(f.note)}</div>` : ''}</td>
         <td class="small">${V.esc(f.status || '')}</td>
+        <td class="n"><b>${ref ? V.fmt.format(ref.price) + (ref.date !== REF ? ` <span class="chip warn">${V.trDate(ref.date)}</span>` : '') : '–'}</b></td>
         <td class="n">${f.lastPrice != null ? V.fmt.format(f.lastPrice) : '–'}</td>
-        <td class="n">${f.priceDate ? V.trDate(f.priceDate) + (is1609 ? '' : ' <span class="chip warn">16.09 değil</span>') : '–'}</td>
+        <td class="n">${f.priceDate ? V.trDate(f.priceDate) : '–'}</td>
         <td class="n">${f.investorCount != null ? V.fmt.format(f.investorCount) : '–'}</td>
       </tr>`;
-    }).join('') || '<tr><td colspan="6" class="muted">Eşleşen fon yok.</td></tr>';
+    }).join('') || '<tr><td colspan="7" class="muted">Eşleşen fon yok.</td></tr>';
     document.getElementById('count').textContent = q ? `${rows.length} sonuç` : '';
   }
   document.getElementById('q').addEventListener('input', render);
@@ -140,14 +149,15 @@
     const f = funds.find(x => x.code === sel.value);
     const hint = document.getElementById('vHint');
     if (!f) { hint.textContent = ''; return; }
-    if (f.priceDate === '2026-09-16' && f.lastPrice) {
-      price.value = String(f.lastPrice).replace('.', ',');
-      hint.textContent = `Listedeki 16.09.2026 fiyatı yazıldı. Ekstrendeki fiyat farklıysa onu kullan.`;
+    const ref = refPrice(f);
+    if (ref) {
+      price.value = String(ref.price).replace('.', ',');
+      hint.textContent = ref.date === REF
+        ? `Listedeki 16.09.2026 fiyatı yazıldı${ref.compiled ? ' (TEFAS verisini aktaran derlemeden)' : ''}. Ekstrendeki fiyat farklıysa onu kullan.`
+        : `Bu fonun listedeki son fiyatı ${V.trDate(ref.date)} tarihli; o yazıldı. Ekstrende 16.09.2026 fiyatı varsa onu kullan.`;
     } else {
       price.value = '';
-      hint.textContent = f.lastPrice
-        ? `Bu fon için listedeki fiyat ${V.trDate(f.priceDate)} tarihli (${V.fmt.format(f.lastPrice)} TL), 16.09 fiyatı değil. Ekstrendeki 16.09.2026 fiyatını yaz.`
-        : 'Bu fon için listede fiyat yok. Ekstrendeki 16.09.2026 fiyatını yaz.';
+      hint.textContent = 'Bu fon için listede 16.09.2026 fiyatı yok. Ekstrendeki 16.09.2026 fiyatını yaz; tasfiye sonrası erimiş fiyatı kullanma.';
     }
     calcValue();
   });
