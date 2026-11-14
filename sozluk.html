@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sözlük – Fon Defterim</title>
+<meta name="description" content="Tasfiye, net yatırım, maktu harç, istinaf… Fon tasfiyesi ve olası davalarla ilgili terimlerin sade açıklamaları.">
+<meta name="theme-color" content="#0e6b5f">
+<link rel="icon" href="img/simge.svg" type="image/svg+xml">
+<link rel="stylesheet" href="stil.css?v=20261113g">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="./" aria-label="Fon Defterim ana sayfa">
+      <svg viewBox="0 0 100 106" aria-hidden="true"><path d="M50 3 92 17v35c0 28-20 42-42 51C28 94 8 80 8 52V17Z" fill="var(--brand)"/><g fill="var(--bg)"><rect x="30" y="34" width="40" height="6" rx="3"/><rect x="30" y="47" width="40" height="6" rx="3"/><rect x="30" y="60" width="27" height="6" rx="3"/></g></svg>
+      <span>Fon Defterim</span>
+    </a>
+    <nav class="nav" aria-label="Sayfalar">
+      <a href="hesapla.html"><span class="long">Hesapla</span><span class="short">Hesapla</span></a>
+      <a href="net-yatirim.html"><span class="long">Net yatırım rehberi</span><span class="short">Rehber</span></a>
+      <a href="fonlar.html"><span class="long">Fonlar</span><span class="short">Fonlar</span></a>
+      <a href="duyurular.html"><span class="long">Duyurular</span><span class="short">Duyurular</span></a>
+      <a href="destek.html"><span class="long">Sık sorulanlar</span><span class="short">SSS</span></a>
+    </nav>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap narrow">
+    <h1>Sözlük</h1>
+    <p class="meta">Tasfiye ve olası davalarla ilgili terimlerin sade açıklamaları. Uygulamadaki ⓘ düğmeleriyle aynı metinler.</p>
+    <div class="search">
+      <label for="q" class="visually-hidden">Sözlükte ara</label>
+      <input id="q" type="search" placeholder="Terim ara (ör. maktu)" autocomplete="off">
+    </div>
+    <h2>Fon ve tasfiye</h2>
+    <details id="tasfiye"><summary>Tasfiye</summary><p>Fonun kapatılması: varlıkları satılır, elde edilen para pay sahiplerine dağıtılır.</p><p class="muted">SPK&#x27;nın 17.09.2026 kararıyla bazı fonlar tasfiyeye alındı. Ödemeler tek seferde değil, varlıklar satıldıkça parça parça gelebilir.</p></details>
+    <details id="pay"><summary>Pay (adet)</summary><p>Fonda sahip olduğun birim sayısı. Alımda artar, satışta azalır.</p><p class="muted">Fonun toplam değeri pay sayısına bölünerek birim pay fiyatı bulunur.</p></details>
+    <details id="birimfiyat"><summary>Birim pay fiyatı</summary><p>Fonun bir payının TL değeri; her iş günü TEFAS&#x27;ta yayımlanır.</p></details>
+    <details id="tefas"><summary>TEFAS</summary><p>Türkiye Elektronik Fon Alım Satım Platformu: fon fiyatlarının yayımlandığı yer.</p></details>
+    <details id="spk"><summary>SPK</summary><p>Sermaye Piyasası Kurulu: fonları ve portföy yönetim şirketlerini denetleyen kurum.</p><p class="muted">Tasfiye kararı ve yaptırımlar SPK bültenlerinde duyurulur. Uygulama bu bültenlerden tasfiyeyle ilgili olanları Duyurular&#x27;da gösterir.</p></details>
+    <details id="mkk"><summary>MKK</summary><p>Merkezi Kayıt Kuruluşu: pay sahipliği kayıtlarını tutar.</p><p class="muted">Fon paylarının kimde ne kadar olduğu MKK kayıtlarında tutulur. Resmî bir net yatırım tutarı açıklanmadı; uygulamadaki rakam senin kontrolün içindir.</p></details>
+    <details id="pys"><summary>Portföy yönetim şirketi</summary><p>Fonu kuran ve yöneten şirket.</p></details>
+    <details id="araodeme"><summary>Tasfiye ödemesi</summary><p>Tasfiye sürecinde hesabına yatan para. Her ödeme kalan alacağını azaltır.</p><p class="muted">Uygulamada &quot;Ödeme&quot; olarak kaydedilir; kaçıncı ödeme olduğu ve 16.09 değerinin yüzde kaçı olduğu gösterilir.</p></details>
+    <h2>Hesap</h2>
+    <details id="netyatirim"><summary>Net yatırım</summary><p>Fona yatırdığın toplam para eksi fondan çektiğin para.</p><p class="muted">Kâr ya da zarar hesaba katılmaz; cebinden net olarak ne çıktığını gösterir. Aynı fonu birden fazla aracı kurumdan aldıysan her kurum için ayrı hesaplanır; bir kurumda eksi çıkarsa 0 sayılır.</p></details>
+    <details id="caprazlama"><summary>Çaprazlama</summary><p>Bir aracı kurumdaki ya da fondaki kârın veya fazla ödemenin, başka bir kurumdaki ya da fondaki alacaktan düşülmesi.</p><p class="muted">Şimdiye kadarki ara ödemelerde çaprazlama yapılmadı; her aracı kurum ve fon ayrı değerlendirildi. Uygulama da böyle hesaplar, fark varsa çaprazlamalı tutarı ayrıca gösterir.</p></details>
+    <details id="deger1609"><summary>16.09.2026 değeri</summary><p>Elindeki pay sayısı × tasfiye öncesi son fiyat. Fonun o günkü piyasa değeri.</p><p class="muted">Fonun 16.09 fiyatı daha sonra yeniden değerlendirilebilir; uygulama fon listesindeki fiyatı kullanır, istersen fon sayfasından değiştirebilirsin.</p></details>
+    <details id="kalanalacak"><summary>Kalan alacak</summary><p>Seçtiğin esasa (16.09 değeri ya da net yatırım) göre henüz geri gelmeyen tutar.</p><p class="muted">Kalan alacak = esas tutar − alınan ödemeler.</p></details>
+    <details id="karzarar"><summary>Kâr / zarar</summary><p>16.09 değeri ile net yatırım arasındaki fark.</p></details>
+    <details id="ortalama"><summary>Ortalama maliyet</summary><p>Elindeki payların ortalama alış fiyatı: toplam alış tutarı ÷ toplam pay.</p></details>
+    <details id="fifo"><summary>FIFO</summary><p>&quot;İlk giren ilk çıkar&quot;: satışta önce en eski alınan payların satıldığı varsayılır.</p><p class="muted">Kalan payların hangi alımlardan geldiğini ve maliyetini böyle görebilirsin.</p></details>
+    <details id="enflasyon"><summary>Alım gücü kaybı</summary><p>Alacak TL olarak sabit kalırken fiyatlar arttığı için aynı paranın daha az şey alması.</p><p class="muted">Uygulama bunu Parametreler&#x27;deki yıllık enflasyon varsayımıyla tahmin eder. Dolar karşılığı ise TCMB kuruyla gerçek olarak hesaplanır.</p></details>
+    <h2>Dava ve masraflar</h2>
+    <details id="idaridava"><summary>İdari dava</summary><p>Bir kamu kurumunun (ör. SPK) işlemine ya da eylemine karşı idare mahkemesinde açılan dava.</p></details>
+    <details id="iptal"><summary>İptal davası</summary><p>Bir idari işlemin hukuka aykırı olduğu gerekçesiyle kaldırılmasını isteyen dava.</p></details>
+    <details id="tamyargi"><summary>Tam yargı davası</summary><p>İdarenin işlemi ya da eylemi yüzünden uğranan zararın ödenmesini isteyen dava.</p></details>
+    <details id="iyuk"><summary>İYUK</summary><p>İdari Yargılama Usulü Kanunu: idari davaların nasıl açılıp yürütüleceğini düzenler.</p><p class="muted">Dava açma süresi genel olarak 60 gündür ve kaçırılırsa hak kaybı olur. Süreyi mutlaka avukatınla teyit et.</p></details>
+    <details id="teblig"><summary>Tebliğ</summary><p>Bir kararın ya da belgenin resmî yoldan sana ulaştırılması. Süreler çoğunlukla tebliğden başlar.</p></details>
+    <details id="davadegeri"><summary>Dava değeri</summary><p>Davada istenen tutar. Harç ve bazı masraflar buna göre hesaplanır.</p></details>
+    <details id="harc"><summary>Harç</summary><p>Devlete ödenen yargı ücreti. Nispi harcın dörtte biri dava açılırken peşin ödenir.</p><p class="muted">Dava kazanılırsa ödenen harçlar karşı taraftan geri alınır.</p></details>
+    <details id="gideravansi"><summary>Gider avansı</summary><p>Tebligat, bilirkişi gibi masraflar için dava başında yatırılan para. Harcanmayan kısmı iade edilir.</p></details>
+    <details id="vekalet"><summary>Karşı vekâlet ücreti</summary><p>Davayı kaybeden tarafın, kazanan tarafın avukatı için ödediği ücret.</p><p class="muted">Mahkeme tarifeye göre belirler. Kazanırsan karşı taraftan alınan bu ücret senin değil avukatının olur (Avukatlık K. m.164). Kendi avukatınla anlaştığın ücreti ise kazansan da kaybetsen de sen ödersin.</p></details>
+    <details id="aaut"><summary>AAÜT</summary><p>Avukatlık Asgari Ücret Tarifesi: mahkemenin vekâlet ücretini belirlerken kullandığı tarife.</p></details>
+    <details id="maktu"><summary>Maktu ücret</summary><p>Dava değerinden bağımsız, tarifede sabit olarak belirlenmiş tutar.</p><p class="muted">Uygulamadaki &quot;makul senaryo&quot; karşı vekâlet ücretinin maktu olarak belirlendiği durumdur.</p></details>
+    <details id="nispi"><summary>Nispi ücret</summary><p>Dava değerine oranla (yüzdeyle) hesaplanan tutar. Dava değeri büyüdükçe artar.</p><p class="muted">Uygulamadaki &quot;en kötü senaryo&quot; karşı vekâlet ücretinin nispi olarak belirlendiği durumdur.</p></details>
+    <details id="istinaf"><summary>İstinaf</summary><p>İlk derece mahkemesinin kararına karşı bölge idare mahkemesine yapılan itiraz.</p></details>
+    <details id="temyiz"><summary>Temyiz</summary><p>Kararın Danıştay tarafından incelenmesi için yapılan başvuru.</p></details>
+    <details id="yasalfaiz"><summary>Yasal faiz</summary><p>Kanunla belirlenen faiz oranı; alacağa dava ya da temerrüt tarihinden itibaren işletilebilir.</p><p class="muted">Avans faizi ise Merkez Bankası&#x27;nın belirlediği, genellikle daha yüksek orandır. Hangisinin istenebileceğini avukatın değerlendirir.</p></details>
+    <p class="muted" style="margin-top:28px;font-size:15px">Açıklamalar genel bilgi amaçlıdır, hukuki tavsiye değildir.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav aria-label="Alt bağlantılar">
+      <a href="hesapla.html">Net yatırımını hesapla</a>
+      <a href="net-yatirim.html">Net yatırım rehberi</a>
+      <a href="fonlar.html">Tasfiyedeki fonlar</a>
+      <a href="duyurular.html">Duyurular</a>
+      <a href="sozluk.html">Sözlük</a>
+      <a href="dolandiricilik.html">Dolandırıcılara dikkat</a>
+      <a href="destek.html">Sık sorulanlar ve destek</a>
+      <a href="gizlilik.html">Gizlilik</a>
+      <a href="mailto:destek@fondefterim.com">destek@fondefterim.com</a>
+    </nav>
+    <div>Hukuki ya da yatırım tavsiyesi değildir. Resmî tutarları tasfiye süreci belirler; buradaki bilgiler kontrol amaçlıdır. Resmî bilgi için KAP ve SPK duyurularını esas al.</div>
+    <div>© 2026 Fon Defterim · Türkiye'deki fon mağdurları için, mağdurlar tarafından.</div>
+  </div>
+</footer>
+<script src="ortak.js?v=20261113g"></script>
+<script>
+(function () {
+  const q = document.getElementById('q');
+  const norm = s => s.toLocaleLowerCase('tr-TR');
+  q.addEventListener('input', () => {
+    const v = norm(q.value.trim());
+    document.querySelectorAll('main details').forEach(d => {
+      const hit = !v || norm(d.textContent).includes(v);
+      d.hidden = !hit; if (v && hit) d.open = true;
+    });
+    document.querySelectorAll('main h2').forEach(h => {
+      let n = h.nextElementSibling, any = false;
+      while (n && n.tagName === 'DETAILS') { if (!n.hidden) any = true; n = n.nextElementSibling; }
+      h.hidden = !any;
+    });
+  });
+  if (location.hash) { const d = document.querySelector(location.hash); if (d && d.tagName === 'DETAILS') d.open = true; }
+})();
+</script>
+</body>
+</html>

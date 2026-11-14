@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Net yatırımım nasıl hesaplanır? – Fon Defterim</title>
+<meta name="description" content="Tasfiyedeki fonlarda net yatırım nedir, nasıl hesaplanır, birden fazla aracı kurumda ne olur? Örnekler ve tarayıcında çalışan küçük bir hesaplayıcı.">
+<meta name="theme-color" content="#0e6b5f">
+<link rel="icon" href="img/simge.svg" type="image/svg+xml">
+<link rel="stylesheet" href="stil.css?v=20261113g">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="./" aria-label="Fon Defterim ana sayfa">
+      <svg viewBox="0 0 100 106" aria-hidden="true"><path d="M50 3 92 17v35c0 28-20 42-42 51C28 94 8 80 8 52V17Z" fill="var(--brand)"/><g fill="var(--bg)"><rect x="30" y="34" width="40" height="6" rx="3"/><rect x="30" y="47" width="40" height="6" rx="3"/><rect x="30" y="60" width="27" height="6" rx="3"/></g></svg>
+      <span>Fon Defterim</span>
+    </a>
+    <nav class="nav" aria-label="Sayfalar">
+      <a href="hesapla.html"><span class="long">Hesapla</span><span class="short">Hesapla</span></a>
+      <a href="net-yatirim.html" aria-current="page"><span class="long">Net yatırım rehberi</span><span class="short">Rehber</span></a>
+      <a href="fonlar.html"><span class="long">Fonlar</span><span class="short">Fonlar</span></a>
+      <a href="duyurular.html"><span class="long">Duyurular</span><span class="short">Duyurular</span></a>
+      <a href="destek.html"><span class="long">Sık sorulanlar</span><span class="short">SSS</span></a>
+    </nav>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap narrow">
+    <h1>Net yatırımım nasıl hesaplanır?</h1>
+    <p class="meta">Tasfiyedeki fonlar için adım adım rehber · Son güncelleme: 13 Kasım 2026</p>
+
+    <div class="notice" role="note">
+      <strong>Not:</strong> Resmî bir net yatırım tutarı henüz açıklanmadı ve hesap yöntemi resmî olarak duyurulmadı. Bu sayfa, şimdiye kadarki ara ödemelerden anlaşılan yöntemi anlatır; kontrol amaçlıdır. Tutarları tasfiye süreci belirler; dava kararını avukatınla ver.
+    </div>
+
+    <h2>Kısaca</h2>
+    <p>Net yatırım, bir fona cebinden net olarak ne kadar para çıktığıdır:</p>
+    <div class="formula">Net yatırım = alışların toplam tutarı − satışların toplam tutarı</div>
+    <ul>
+      <li>Yalnızca <b>16.09.2026'ya kadarki</b> alım-satımlar sayılır.</li>
+      <li>Kâr ya da zarar hesaba katılmaz; fonun değeri ne olursa olsun bu tutar değişmez.</li>
+      <li>Her fon için <b>ayrı</b> hesaplanır. Aynı fonu birden fazla aracı kurumdan aldıysan <b>her aracı kurum için de ayrı</b> hesaplanır.</li>
+      <li>Tasfiyeden gelen ödemeler net yatırımı değiştirmez; <b>kalan alacaktan</b> düşülür.</li>
+    </ul>
+
+    <h2>Adım adım</h2>
+    <ol class="steps">
+      <li><b>İşlemlerini topla.</b> Aracı kurumunun hesap ekstresinden ya da işlem geçmişinden, tasfiyedeki fonlarla ilgili tüm alım ve satımlarını bul. Her işlem için tarih, adet ve birim fiyat (ya da tutar) yeterli. Düzenli tutmak istersen hazır şablonları kullanabilirsin: <a href="sablon/islemler-sablonu.csv" download>işlemler şablonu</a> ve <a href="sablon/odemeler-sablonu.csv" download>ödemeler şablonu</a> (Excel ve Numbers'ta açılır; Fon Defterim de doğrudan içe aktarır).</li>
+      <li><b>Fon fon ve aracı kurum aracı kurum ayır.</b> Örneğin aynı fonu iki ayrı kurumdan aldıysan iki ayrı liste yap.</li>
+      <li><b>Her liste için hesapla:</b> alışların tutarlarını topla, satışların tutarlarını topla, birinciden ikinciyi çıkar.</li>
+      <li><b>Eksi çıkarsa 0 say.</b> Bir kurumda sattığın tutar aldığından fazlaysa o kurumda net yatırımın 0'dır; bu fark başka kurumdaki alacağından düşülmez.</li>
+      <li><b>Topla.</b> Fonun net yatırımı, kurumlardaki net yatırımların toplamıdır.</li>
+      <li><b>Gelen ödemeleri düş.</b> Kalan alacak = net yatırım − tasfiyeden gelen ödemeler (en az 0).</li>
+    </ol>
+
+    <h2>Örnek 1: Tek aracı kurum</h2>
+    <p>ABC fonunu tek bir aracı kurumdan almış biri (uydurma rakamlar):</p>
+    <div class="table-scroll">
+      <table>
+        <tr><th>Tarih</th><th>İşlem</th><th class="n">Adet × fiyat</th><th class="n">Tutar</th></tr>
+        <tr><td>10.03.2026</td><td>Alış</td><td class="n">10.000 × 10 TL</td><td class="n">100.000 TL</td></tr>
+        <tr><td>05.05.2026</td><td>Alış</td><td class="n">5.000 × 12 TL</td><td class="n">60.000 TL</td></tr>
+        <tr><td>02.08.2026</td><td>Satış</td><td class="n">4.000 × 15 TL</td><td class="n">60.000 TL</td></tr>
+        <tr class="total"><td colspan="3">Net yatırım = 160.000 − 60.000</td><td class="n">100.000 TL</td></tr>
+      </table>
+    </div>
+    <p>Bu kişiye tasfiyeden 30.000 TL ödeme geldiyse net yatırıma göre kalan alacağı 70.000 TL'dir.</p>
+
+    <h2>Örnek 2: İki aracı kurum</h2>
+    <p>Aynı fonu iki ayrı kurumdan almış biri:</p>
+    <div class="table-scroll">
+      <table>
+        <tr><th>Aracı kurum</th><th class="n">Alışlar</th><th class="n">Satışlar</th><th class="n">Net</th><th class="n">Sayılan</th></tr>
+        <tr><td>A Yatırım</td><td class="n">100.000</td><td class="n">150.000</td><td class="n">−50.000</td><td class="n">0</td></tr>
+        <tr><td>B Menkul</td><td class="n">200.000</td><td class="n">0</td><td class="n">200.000</td><td class="n">200.000</td></tr>
+        <tr class="total"><td>Toplam</td><td class="n">300.000</td><td class="n">150.000</td><td class="n">150.000</td><td class="n">200.000</td></tr>
+      </table>
+    </div>
+    <p>A Yatırım'da kârla satıp yatırdığından fazlasını geri almış; orada net yatırımı 0 sayılır. B Menkul'deki 200.000 TL'lik alacağından bu kâr düşülmez. Yani net yatırımı <b>200.000 TL</b>'dir.</p>
+    <p>Tüm kurumları tek bir hesap gibi toplasaydık (buna <b>çaprazlama</b> deniyor) sonuç 150.000 TL olurdu. Şimdiye kadarki ara ödemelerde çaprazlama yapılmadı; her aracı kurum ve fon kendi içinde değerlendirildi. İleride farklı bir yöntem uygulanırsa tutar değişebilir; uygulama bu yüzden fark olduğunda iki tutarı da gösterir.</p>
+
+    <div class="cta-card">
+      <div>
+        <h2 style="margin:0 0 6px">Kendin hesapla</h2>
+        <p style="margin:0">Excel ya da CSV dosyanı seç ya da aracı kurum toplamlarını yaz; fon ve kurum bazında net yatırımını hemen gör. Dosyan cihazından çıkmaz.</p>
+      </div>
+      <a class="btn primary big" href="hesapla.html">Hesaplamaya git</a>
+    </div>
+
+    <h2>16.09 değeri ile farkı</h2>
+    <p>Uygulama iki tutar gösterir:</p>
+    <ul>
+      <li><b>Net yatırım:</b> cebinden net çıkan para (yukarıdaki hesap).</li>
+      <li><b>16.09.2026 değeri:</b> elindeki payların tasfiye kararından önceki son gün fiyatıyla değeri (kalan pay × 16.09 fiyatı). Fon kâr ettiyse net yatırımdan yüksek, zarar ettiyse düşüktür.</li>
+    </ul>
+    <p>Hangisinin esas alınacağı tasfiye sürecine ve olası davalara göre değişebilir. Uygulamada ikisini de ayrı ayrı görebilirsin.</p>
+
+    <h2>Kanuni ara ödeme tavanı</h2>
+    <p>7596 sayılı Kanun'un 4. maddesindeki ilk ödeme hakkı, yatırımcı başına her fon için net yatırım ile 1.000.000 TL'nin küçüğü olarak tanımlanıyor. Ara ödemelerin her aracı kurum ve fon için ayrı yapıldığı görülüyor; uygulama da tavanı böyle hesaplar. Bilgi amaçlıdır.</p>
+
+    <h2>Sık yapılan hatalar</h2>
+    <ul>
+      <li><b>16.09.2026'dan sonraki işlemleri katmak.</b> Tasfiyeden gelen paraları satış gibi girme; onlar ödemedir.</li>
+      <li><b>Aynı işlemi iki kez girmek.</b> Hem aracı kurum ekstresinden hem başka bir dökümden aktarırken dikkat et. Uygulama aynı tarih, adet ve fiyattaki işlemi ikinci kez eklemez.</li>
+      <li><b>Kurumları karıştırmak.</b> Aynı fonu birden fazla yerden aldıysan her işleme aracı kurumunu yaz; yoksa bir kurumdaki kâr diğerindeki alacağı azaltmış gibi görünür.</li>
+      <li><b>Kâr-zararı net yatırım sanmak.</b> Net yatırım fonun değerinden bağımsızdır.</li>
+    </ul>
+
+    <p style="margin-top:32px"><a class="btn primary" href="./">Fon Defterim'e dön</a></p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav aria-label="Alt bağlantılar">
+      <a href="hesapla.html">Net yatırımını hesapla</a>
+      <a href="net-yatirim.html">Net yatırım rehberi</a>
+      <a href="fonlar.html">Tasfiyedeki fonlar</a>
+      <a href="duyurular.html">Duyurular</a>
+      <a href="sozluk.html">Sözlük</a>
+      <a href="dolandiricilik.html">Dolandırıcılara dikkat</a>
+      <a href="destek.html">Sık sorulanlar ve destek</a>
+      <a href="gizlilik.html">Gizlilik</a>
+      <a href="mailto:destek@fondefterim.com">destek@fondefterim.com</a>
+    </nav>
+    <div>Hukuki ya da yatırım tavsiyesi değildir. Resmî tutarları tasfiye süreci belirler; buradaki bilgiler kontrol amaçlıdır. Resmî bilgi için KAP ve SPK duyurularını esas al.</div>
+    <div>© 2026 Fon Defterim · Türkiye'deki fon mağdurları için, mağdurlar tarafından.</div>
+  </div>
+</footer>
+
+</body>
+</html>
