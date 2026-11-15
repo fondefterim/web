@@ -222,7 +222,84 @@
   }
 
   // funds: [{c: kod, n: ad, p: 16.09 fiyatı}]; num: sayı okuyucu (hesapla.js ile aynı).
+  // ---------- Türkiye İş Bankası "Hesap Özeti" ----------
+  // Fon işlemleri açıklamada yazar: "123456-DOH-TEFAS YATIRIM FONU TALİMAT SONUCU - ALIM Fiyat/Faiz: 1.234567 Adt: +1,234.567".
+  // Uzun açıklama bir üst satıra taşar. "ALIŞ/SATIŞ TALİMATI" satırları yalnızca emirdir (bloke); işlem sayılmaz.
+  // Tutar Türkçe (12.345,67), adet çoğu zaman İngilizce (1,234.567): adet ve fiyat, "adet × fiyat ≈ tutar" tutacak biçimde okunur.
+  // Uygulamadaki IsBankStatement.swift ile aynı kurallar.
+  function isBank(lines) {
+    const n = lines.map(norm);
+    return n.some(l => l.includes('is bankasi') || l.includes('isbank.com.tr')) && n.some(l => l.includes('hesap ozeti') || l.includes('yatirim fonu'));
+  }
+
+  const IB_ROW = /^\s*(\d{2})\/(\d{2})\/(\d{4})-\d{2}:\d{2}(?::\d{2})?\s+\d+\s+/;
+  const IB_MONEY = /(^|[^\d.,])(-?\d{1,3}(?:\.\d{3})*,\d{2})(?![\d,])/;
+  const IB_CODE = /\b\d{2,8}-([A-Z0-9]{3})-/;
+  const IB_UNITS = /Adt\s*:\s*([+-]?)\s*(\d[\d.,]*)/;
+
+  function ibReadings(t) {
+    const out = [];
+    for (const v of [parseFloat(t.replace(/,/g, '')), parseFloat(t.replace(/\./g, '').replace(',', '.'))]) {
+      if (v > 0 && !out.includes(v)) out.push(v);
+    }
+    return out;
+  }
+
+  function ibRows(lines) {
+    const out = []; let pending = [], started = false;
+    lines.forEach((line, i) => {
+      const m = IB_ROW.exec(line);
+      if (m) {
+        const rest = line.slice(m[0].length);
+        out.push({ i, date: +m[3] * 10000 + +m[2] * 100 + +m[1], row: rest, text: pending.concat(rest).join(' ') });
+        pending = []; started = true;
+      } else if (started || norm(line).includes('tefas') || line.includes('Adt')) {
+        pending.push(line);
+      }
+      if (norm(line).startsWith('islem tarihi')) { started = true; pending = []; }
+    });
+    return out;
+  }
+
+  function ibSide(n) {
+    const k = n.indexOf('talimat sonucu');
+    const tail = k >= 0 ? n.slice(k + 14) : n;
+    const buy = tail.includes('alim') || tail.includes('alis'), sell = tail.includes('satim') || tail.includes('satis');
+    return buy !== sell ? (buy ? 'buy' : 'sell') : null;
+  }
+
+  function ibScan(lines, funds) {
+    const codes = new Set(funds.map(f => f.c));
+    const out = { candidates: [], unread: [], others: [], broker: 'İş Bankası' };
+    for (const r of ibRows(lines)) {
+      const n = norm(r.text);
+      if (!n.includes('yatirim fonu') || n.includes('iptal')) continue;
+      if (!(n.includes('talimat sonucu') || n.includes('fonu alisi') || n.includes('fonu satisi'))) continue;   // emir, işlem değil
+      const cm = IB_CODE.exec(r.text);
+      if (!cm) { out.unread.push(r.text); continue; }
+      const code = cm[1];
+      if (!codes.has(code)) { if (!out.others.includes(code)) out.others.push(code); continue; }
+      const sd = ibSide(n);
+      const um = IB_UNITS.exec(r.text);
+      const mm = IB_MONEY.exec(r.row);
+      if (!sd || !um || !mm) { out.unread.push(r.text); continue; }
+      const before = r.text.slice(0, um.index).match(/\d[\d.,]*\d|\d/g);
+      const amount = Math.abs(parseFloat(mm[2].replace(/\./g, '').replace(',', '.')));
+      let best = null;
+      if (before && amount > 0) {
+        for (const u of ibReadings(um[2])) for (const p of ibReadings(before[before.length - 1])) {
+          const err = Math.abs(u * p - amount) / amount;
+          if (!best || err < best.err) best = { units: u, price: p, err };
+        }
+      }
+      if (!best || best.err > 0.01) { out.unread.push(r.text); continue; }
+      out.candidates.push({ line: r.i + 1, date: r.date, code, side: sd, units: best.units, price: best.price, amount });
+    }
+    return out;
+  }
+
   function scan(lines, funds, num) {
+    if (isBank(lines)) return ibScan(lines, funds);
     const codes = new Set(funds.map(f => f.c));
     const prices = Object.fromEntries(funds.filter(f => f.p > 0).map(f => [f.c, f.p]));
     const names = funds.map(f => [norm(f.n), f.c]).filter(([n]) => n.length >= 8).sort((a, b) => b[0].length - a[0].length);
@@ -245,5 +322,5 @@
     return out;
   }
 
-  window.FonPDF = { readLines, scan, _test: { extractDate, extractNumbers, bestTriple, orderSymbol, side, detectBroker, groupRows } };
+  window.FonPDF = { readLines, scan, _test: { isBank, ibScan, extractDate, extractNumbers, bestTriple, orderSymbol, side, detectBroker, groupRows } };
 })();
