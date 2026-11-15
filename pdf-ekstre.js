@@ -183,12 +183,21 @@
   }
 
   function fundCode(line, codes, names) {
-    const tokens = upTR(line).split(/[^\p{L}\p{N}]+/u);
+    // Kod ekstrede büyük harfle yazılır; "Brt Kar" (brüt kâr) gibi sözcükler BRT fonu sayılmasın.
+    const tokens = String(line).split(/[^\p{L}\p{N}]+/u);
     const hit = tokens.find(t => codes.has(t));
     if (hit) return hit;
     const n = norm(line);
     const byName = names.find(([nm]) => n.includes(nm));
     return byName ? byName[1] : null;
+  }
+
+  // Fon alım-satımı olmayan nakit hareketleri (repo, stopaj, virman, devir…).
+  const NON_FUND = [' repo ', ' ters repo', ' stopaj ', ' virman', ' devir ', ' faiz ', ' komisyon ', ' bsmv ', ' saklama ',
+    ' havale ', ' eft ', ' para yatirma', ' para cekme', ' temettu '];
+  function isNonFundMovement(line) {
+    const n = ' ' + norm(line).replace(/[^a-z0-9 ]/g, ' ') + ' ';
+    return NON_FUND.some(k => n.includes(k));
   }
 
   function side(line) {
@@ -304,7 +313,9 @@
     const prices = Object.fromEntries(funds.filter(f => f.p > 0).map(f => [f.c, f.p]));
     const names = funds.map(f => [norm(f.n), f.c]).filter(([n]) => n.length >= 8).sort((a, b) => b[0].length - a[0].length);
     const out = { candidates: [], unread: [], others: [], broker: detectBroker(lines) };
-    lines.forEach((line, i) => {
+    lines.forEach((original, i) => {
+      // "1.234 Payx1,234567" (Tera): fiyat "x" harfine bitişik; sayı olarak okunabilsin diye ayrılır.
+      const line = String(original).replace(/(pay)\s*x\s*(?=\d)/gi, '$1 x ');
       const d = extractDate(line);
       if (!d) return;
       let explicit = null;
@@ -315,6 +326,8 @@
       }
       const numbers = extractNumbers(d.rest, num);
       const code = explicit || fundCode(line, codes, names);
+      // İçinde alış/satış geçmeyen repo, stopaj gibi satırlar kodla eşleşse bile atlanır.
+      if (isNonFundMovement(line) && (!code || !side(line))) return;
       const t = bestTriple(numbers, code ? prices[code] : null);
       if (!t) { if (numbers.length >= 2) out.unread.push(line); return; }
       out.candidates.push({ line: i + 1, date: d.date, code, side: side(line), units: t.units, price: t.price, amount: t.amount });
@@ -322,5 +335,5 @@
     return out;
   }
 
-  window.FonPDF = { readLines, scan, _test: { isBank, ibScan, extractDate, extractNumbers, bestTriple, orderSymbol, side, detectBroker, groupRows } };
+  window.FonPDF = { readLines, scan, _test: { isBank, ibScan, isNonFundMovement, fundCode, extractDate, extractNumbers, bestTriple, orderSymbol, side, detectBroker, groupRows } };
 })();
