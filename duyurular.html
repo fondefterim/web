@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Duyurular – Fon Defterim</title>
-<meta name="description" content="Tasfiyedeki fonlarla ilgili SPK bülten ve duyuruları; her saat kendiliğinden güncellenir.">
+<meta name="description" content="Tasfiyedeki fonlarla ilgili SPK bülten ve duyuruları ile Yatırımcı Tazmin Merkezi (YTM) duyuruları; her saat kendiliğinden kontrol edilir.">
 <meta name="theme-color" content="#0e6b5f">
 <meta property="og:title" content="Duyurular – Fon Defterim">
-<meta property="og:description" content="Tasfiyedeki fonlarla ilgili SPK bülten ve duyuruları; her saat kendiliğinden güncellenir.">
+<meta property="og:description" content="Tasfiyedeki fonlarla ilgili SPK bülten ve duyuruları ile Yatırımcı Tazmin Merkezi (YTM) duyuruları; her saat kendiliğinden kontrol edilir.">
 <meta property="og:image" content="https://fondefterim.com/img/A1-ozet.jpg">
 <link rel="canonical" href="https://fondefterim.com/duyurular.html">
 <meta property="og:url" content="https://fondefterim.com/duyurular.html">
@@ -41,7 +41,7 @@
   <div class="wrap narrow">
     <h1>Duyurular</h1>
     <p class="meta" id="updated">Yükleniyor…</p>
-    <p>Uygulamadaki Duyurular bölümüyle aynı liste; gün içinde saatte bir kendiliğinden güncellenir.</p>
+    <p>Uygulamadaki Duyurular bölümüyle aynı liste. SPK ve YTM her saat kendiliğinden kontrol edilir; yeni bir duyuru çıkınca buraya da eklenir.</p>
 
     <section id="bizden" class="news-section">
       <div class="news-head">
@@ -52,8 +52,8 @@
     </section>
 
     <section id="resmi" class="ann-section">
-      <h2>SPK ve resmî kaynaklar <span id="nOfficial" class="chip"></span></h2>
-      <p class="muted" style="font-size:15px;margin-top:0">SPK'nın bülten ve basın duyurularından tasfiyedeki fonlarla ilgili olanlar. Burada yalnızca başlık ve kısa bir alıntı var; başlığa dokunursan asıl kaynak açılır. Resmî metin için her zaman kaynağı oku.</p>
+      <h2>SPK, YTM ve resmî kaynaklar <span id="nOfficial" class="chip"></span></h2>
+      <p class="muted" style="font-size:15px;margin-top:0">SPK'nın bülten ve basın duyurularından tasfiyedeki fonlarla ilgili olanlar ve Yatırımcı Tazmin Merkezi'nin (YTM) duyuruları. Burada yalnızca başlık ve kısa bir alıntı var; başlığa dokunursan asıl kaynak açılır. Resmî metin için her zaman kaynağı oku.</p>
       <div class="search">
         <label for="q" class="visually-hidden">Duyurularda ara</label>
         <input id="q" type="search" placeholder="Ara (ör. TLY, ara ödeme, bülten)" autocomplete="off">
@@ -92,7 +92,8 @@
   try {
     const d = await V.load();
     items = (d.announcements || []).slice().sort(V.byDate);
-    document.getElementById('updated').textContent = `${items.length} duyuru · son güncelleme: ${V.trDate(d.updated)}`;
+    const latest = items.find(a => !V.isOwn(a));
+    document.getElementById('updated').textContent = `${items.length} duyuru` + (latest ? ` · en yeni resmî duyuru: ${V.trDate(latest.date)}` : '') + ' · her saat kontrol edilir';
   } catch (e) {
     document.getElementById('updated').textContent = '';
     const msg = '<p class="muted">Duyurular şu an yüklenemedi. Biraz sonra yeniden dene ya da doğrudan <a href="https://spk.gov.tr" rel="noopener noreferrer">spk.gov.tr</a> adresine bak.</p>';
