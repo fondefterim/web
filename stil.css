@@ -34,6 +34,8 @@
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
+/* Telefonda sayfa hiçbir durumda yana kaymasın (taşan öğe kendi kutusunda kalır). */
+html, body { overflow-x: clip; }
 body {
   margin: 0;
   overflow-x: hidden;
@@ -284,7 +286,14 @@ table.result tr.m-fund { display: none; }
   table.result tr.m-fund td { align-items: center; }
   table.result input.paid { width: 120px; }
   table.result tr.sub td.broker { margin-left: 0; }
-  .table-scroll { overflow-x: visible; }
+  /* Kart düzenine geçen sonuç tablosu kaydırılmaz; diğer tablolar kendi kutusunda kayar. */
+  .table-scroll:has(> table.result) { overflow-x: visible; }
+  .table-scroll table { font-size: 14px; }
+  .table-scroll th, .table-scroll td { padding-left: 6px; padding-right: 6px; }
+}
+@media (max-width: 420px) {
+  .table-scroll table { font-size: 13px; }
+  .table-scroll th, .table-scroll td { padding-left: 4px; padding-right: 4px; }
 }
 
 /* ---------- Ana sayfa: giriş bölümü ---------- */
@@ -562,7 +571,7 @@ a.store-badge:hover { transform: translateY(-1px); }
 [hidden] { display: none !important; }
 
 /* Fonlar: kurucuya göre kartlar */
-.mgr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; align-items: start; }
+.mgr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 16px; align-items: start; }
 .mgr-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
 .mgr-card header { padding: 16px 18px 12px; border-bottom: 1px solid var(--line);
   background: linear-gradient(135deg, color-mix(in srgb, var(--brand) 12%, var(--surface)), var(--surface)); }
