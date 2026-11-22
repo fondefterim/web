@@ -32,6 +32,16 @@
   "sameAs":["https://x.com/fondefterimcom"]}}
 </script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "MobileApplication", "name": "Fon Defterim", "operatingSystem": "iOS", "applicationCategory": "FinanceApplication", "inLanguage": "tr", "url": "https://apps.apple.com/tr/app/fon-defterim/id6836281635", "downloadUrl": "https://apps.apple.com/tr/app/fon-defterim/id6836281635", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "TRY"}, "publisher": {"@id": "https://fondefterim.com/#kurulus"}}</script>
+<style>
+.ses-band{padding:28px 0 52px}
+.ses-band-kart{position:relative;overflow:hidden;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:22px;padding:26px 28px;background:var(--surface);border:1px solid color-mix(in srgb,var(--brand) 38%,var(--line));border-radius:22px;box-shadow:var(--shadow)}
+.ses-band-kart::before{content:"";position:absolute;inset:0 auto 0 0;width:6px;background:var(--brand)}
+.ses-band-simge{display:grid;place-items:center;width:58px;height:58px;border-radius:16px;background:var(--accent-soft);color:var(--brand);font-size:31px;font-weight:800;line-height:1}
+.ses-band h2{margin:0 0 4px;font-size:clamp(23px,3vw,30px);line-height:1.15;letter-spacing:-.015em}
+.ses-band p{margin:0;color:var(--muted);font-size:17px}
+.ses-band .btn{white-space:nowrap}
+@media (max-width:760px){.ses-band{padding:20px 0 48px}.ses-band-kart{grid-template-columns:auto minmax(0,1fr);padding:22px 18px 20px 22px;gap:14px}.ses-band-simge{width:48px;height:48px;font-size:26px}.ses-band .btn{grid-column:1/-1;width:100%}}
+</style>
 </head>
 <body>
 
@@ -99,6 +109,19 @@
           <button type="button" class="nav-btn next" aria-label="Sonraki ekran"><svg viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div>
         <div class="dots" id="dots"><button type="button" aria-label="Özet ekranı" aria-current="true"></button><button type="button" aria-label="Fonlarım ekranı"></button><button type="button" aria-label="Dava ekranı"></button><button type="button" aria-label="Kolay mod ekranı"></button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ses-band" aria-labelledby="ses-band-baslik">
+    <div class="wrap">
+      <div class="ses-band-kart">
+        <span class="ses-band-simge" aria-hidden="true">#</span>
+        <div>
+          <h2 id="ses-band-baslik">Sesini duyur</h2>
+          <p>Yapay zekâ sana güncel hashtaglerle bir paylaşım taslağı hazırlasın. Düzenle, uygun bulursan kendi hesabından paylaş.</p>
+        </div>
+        <a class="btn primary big" href="ses.html">Metnimi hazırla</a>
       </div>
     </div>
   </section>
