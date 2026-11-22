@@ -90,18 +90,43 @@
     const bos = !$("metin").value.trim();
     if (!$("metin").disabled) { $("paylas").disabled = bos || n > 280; $("kopyala").disabled = bos; }
   }
+  function dogrulamaBitti(tur, deger) {
+    if (!bekleyen) return;
+    const b = bekleyen;
+    bekleyen = null;
+    clearTimeout(b.sure);
+    tur === "tamam" ? b.coz(deger) : b.red(new Error("dogrulama"));
+  }
+  function sureBaslat() {
+    if (!bekleyen) return;
+    clearTimeout(bekleyen.sure);
+    bekleyen.sure = setTimeout(() => dogrulamaBitti("hata"), 20000);
+  }
   function dogrulamaAl() {
     if (yerel) return Promise.resolve("yerel");
     return new Promise((coz, red) => {
-      bekleyen = { coz, red };
-      if (widget === null) {
-        widget = turnstile.render("#dogrulama", {
-          sitekey: TURNSTILE_SITE, appearance: "interaction-only", language: "tr",
-          callback: (t) => { bekleyen?.coz(t); bekleyen = null; },
-          "error-callback": () => { bekleyen?.red(new Error("dogrulama")); bekleyen = null; return true; },
-        });
-      } else {
-        turnstile.reset(widget);
+      bekleyen = { coz, red, sure: null };
+      sureBaslat();
+      try {
+        if (widget === null) {
+          widget = turnstile.render("#dogrulama", {
+            sitekey: TURNSTILE_SITE, appearance: "interaction-only", language: "tr",
+            callback: (t) => dogrulamaBitti("tamam", t),
+            "error-callback": () => { dogrulamaBitti("hata"); return true; },
+            "expired-callback": () => dogrulamaBitti("hata"),
+            "timeout-callback": () => dogrulamaBitti("hata"),
+            "unsupported-callback": () => dogrulamaBitti("hata"),
+            "before-interactive-callback": () => {
+              if (bekleyen) clearTimeout(bekleyen.sure);
+              $("durum").textContent = "Devam etmek için aşağıdaki doğrulamayı tamamla.";
+            },
+            "after-interactive-callback": sureBaslat,
+          });
+        } else {
+          turnstile.reset(widget);
+        }
+      } catch {
+        dogrulamaBitti("hata");
       }
     });
   }
@@ -120,7 +145,7 @@
         mesgul(false, v.kaynak === "yeni" ? "Yeni taslak hazır." : "Daha önce hazırlanan bir taslak gösteriliyor.");
       }
     } catch (e) {
-      mesgul(false, e.message === "dogrulama" ? "Doğrulama tamamlanamadı. Tekrar dene." : (e instanceof TypeError ? "Bağlantı kurulamadı. Tekrar dene." : e.message));
+      mesgul(false, e.message === "dogrulama" ? "Doğrulama tamamlanamadı. Başka metin düğmesiyle tekrar dene." : (e instanceof TypeError ? "Bağlantı kurulamadı. Tekrar dene." : e.message));
     }
     say();
   }
