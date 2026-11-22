@@ -39,9 +39,12 @@
 .ses-band-yazi{flex:1;min-width:0;line-height:1.3}
 .ses-band h2{margin:0;font-size:18px;line-height:1.2;letter-spacing:-.01em}
 .ses-band p{margin:1px 0 0;color:var(--muted);font-size:15px}
+.ses-band-etiketler{display:flex;flex-wrap:wrap;gap:6px;padding:0 0 11px 52px}
+.ses-band-etiketler[hidden]{display:none}
+.ses-band-etiketler span{max-width:100%;overflow-wrap:anywhere;background:var(--surface);color:var(--brand);border:1px solid color-mix(in srgb,var(--brand) 28%,var(--line));border-radius:8px;padding:3px 8px;font-size:13px;font-weight:700;line-height:1.3}
 .ses-band .kisa{display:none}
 .ses-band .btn{flex:none;min-height:44px;padding:9px 18px;font-size:15px;border-radius:12px;white-space:nowrap}
-@media (max-width:640px){.ses-band .uzun{display:none}.ses-band .kisa{display:inline}.ses-band .btn{padding:9px 14px}}
+@media (max-width:640px){.ses-band .uzun{display:none}.ses-band .kisa{display:inline}.ses-band .btn{padding:9px 14px}.ses-band-etiketler{padding-left:0}}
 </style>
 </head>
 <body>
@@ -73,7 +76,21 @@
         </div>
         <a class="btn primary" href="ses.html"><span class="uzun">Metnimi hazırla</span><span class="kisa">Hazırla</span></a>
       </div>
+      <div class="ses-band-etiketler" id="sesEtiketler" aria-label="Güncel hashtagler" hidden></div>
     </div>
+    <script>
+    (() => {
+      const kutu = document.getElementById("sesEtiketler");
+      const yerel = ["localhost", "127.0.0.1"].includes(location.hostname);
+      fetch((yerel ? "http://localhost:8787" : "https://ses-api.fondefterim.com") + "/api/etiketler")
+        .then((r) => r.ok ? r.json() : null)
+        .then((v) => {
+          if (!v?.etiketler?.length) return;
+          kutu.replaceChildren(...v.etiketler.map((e) => { const s = document.createElement("span"); s.textContent = e; return s; }));
+          kutu.hidden = false;
+        }).catch(() => {});
+    })();
+    </script>
   </section>
 
   <section class="hero2">
