@@ -241,14 +241,31 @@
   let sheets = [], sheetIdx = 0, hRow = 0, map = {}, fixed = null, fileName = '';
   const paidByFund = {};
 
+  // Genel portföy şablonları (hisse, kripto, döviz de içerir): varlık türü ve para birimi sütunu (uygulamayla aynı).
+  function filterCols(rows, h) {
+    const used = new Set(Object.values(map));
+    const heads = (rows[h] || []).map(c => norm(String(c == null ? '' : c).replace(/_/g, ' ')));
+    const find = keys => { const i = heads.findIndex((t, col) => !used.has(col) && keys.some(k => t === k || t.startsWith(k))); return i < 0 ? null : i; };
+    return {
+      asset: find(['varlik tipi', 'varlik turu', 'varlik sinifi', 'urun tipi', 'urun turu', 'enstruman tipi', 'enstruman turu', 'menkul tipi', 'menkul turu', 'kiymet turu', 'asset type', 'asset class']),
+      cur: find(['para birimi', 'doviz cinsi', 'doviz', 'pb', 'currency']),
+    };
+  }
+  const isFundType = v => { const n = norm(v); return !n || n.includes('fon') || n.includes('fund'); };
+  const isTL = v => { const n = norm(v).replace(/\s/g, ''); return !n || ['tl', 'try', '₺', 'turklirasi', 'trl'].includes(n); };
+
   function rowsToTrades() {
     if (fixed) return fixed.trades;
     const rows = sheets[sheetIdx].rows, out = [];
+    const fc = filterCols(rows, hRow);
     for (let r = hRow + 1; r < rows.length; r++) {
       const x = rows[r] || [];
       const get = f => map[f] != null ? x[map[f]] : null;
       if (x.every(c => c == null || c === '')) continue;
-      out.push({ row: r + 1, date: get('date'), code: get('code'), side: get('side'), units: get('units'), price: get('price'), amount: get('amount'), broker: get('broker') });
+      const asset = fc.asset != null ? String(x[fc.asset] == null ? '' : x[fc.asset]).trim() : '';
+      const cur = fc.cur != null ? String(x[fc.cur] == null ? '' : x[fc.cur]).trim() : '';
+      const skip = !isFundType(asset) ? 'fon değil (' + asset + ')' : !isTL(cur) ? 'TL dışı (' + cur + ')' : null;
+      out.push({ row: r + 1, date: get('date'), code: get('code'), side: get('side'), units: get('units'), price: get('price'), amount: get('amount'), broker: get('broker'), skip });
     }
     return out;
   }
@@ -257,6 +274,7 @@
     const raw = rowsToTrades();
     const funds = new Map(); const skipped = []; let after = 0, used = 0;
     for (const t of raw) {
+      if (t.skip) { skipped.push([t.row, t.skip]); continue; }
       const d = dateKey(t.date), c = fundCode(t.code);
       if (!d || !c) { skipped.push([t.row, !d ? 'tarih okunamadı' : 'fon kodu okunamadı']); continue; }
       let units = num(t.units), price = num(t.price), amount = num(t.amount);
@@ -345,7 +363,7 @@
   function notes(skipped, after, used) {
     let h = `<p>${used} işlem hesaba katıldı.</p>`;
     if (after) h += `<p class="warnline">16.09.2026'dan sonra tarihli ${after} işlem hesaba katılmadı (tasfiye ödemeleri işlem değildir).</p>`;
-    if (skipped.length) h += `<details><summary>Okunamayan satır: ${skipped.length}</summary><ul>${skipped.slice(0, 50).map(([r, why]) => `<li>Satır ${r}: ${esc(why)}</li>`).join('')}</ul></details>`;
+    if (skipped.length) h += `<details><summary>Alınmayan satır: ${skipped.length}</summary><ul>${skipped.slice(0, 50).map(([r, why]) => `<li>Satır ${r}: ${esc(why)}</li>`).join('')}</ul></details>`;
     return h;
   }
 
