@@ -4,45 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sesini duyur – Fon Defterim</title>
-<meta name="description" content="Tasfiye sürecinden etkilenen yatırımcılar için düzenleyip kendi hesabından paylaşabileceğin ölçülü metin taslakları.">
+<meta name="description" content="Bu bölüm geçici olarak kapalı.">
+<meta name="robots" content="noindex">
 <meta name="theme-color" content="#0e6b5f">
 <link rel="canonical" href="https://fondefterim.com/ses.html">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/img/simge.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="stil.css?v=20261120b">
-<style>
-.ses-kart{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin:20px 0}
-.ses-kart label{display:block;font-weight:600;margin-bottom:8px}
-#metin{display:block;width:100%;min-height:270px;resize:vertical;font:inherit;color:var(--text);background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:14px}
-#metin:focus-visible,.ses-dugmeler button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
-.ses-alt{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:14px;margin:8px 0 14px}
-#sayac.asim{color:var(--warn);font-weight:600}
-.ses-dugmeler{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.ses-dugmeler button{min-height:46px;font:inherit;font-weight:600;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;padding:8px 12px}
-.ses-dugmeler button.ana{grid-column:1/-1;background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
-.ses-dugmeler button:disabled{opacity:.55;cursor:default}
-#dogrulama:empty{display:none}#dogrulama{margin-top:12px}
-.ses-guncel{margin:0 0 16px}
-.ses-guncel[hidden]{display:none}
-.ses-guncel b{display:block;font-size:14px;color:var(--muted);font-weight:600;margin-bottom:7px}
-#guncelListe{display:flex;flex-wrap:wrap;gap:7px}
-#guncelListe span{max-width:100%;overflow-wrap:anywhere;background:var(--accent-soft);color:var(--brand);border-radius:9px;padding:5px 10px;font-size:14px;font-weight:700;line-height:1.3}
-.metin-kutu{position:relative}
-#yukleme{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:22px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
-#yukleme[hidden]{display:none}
-#yuklemeAdim{font-weight:700;font-size:17px;line-height:1.35}
-.yukleme-cubuk{position:relative;height:6px;overflow:hidden;border-radius:6px;background:color-mix(in srgb,var(--brand) 16%,transparent)}
-.yukleme-cubuk::after{content:"";position:absolute;inset:0 auto 0 -40%;width:40%;border-radius:6px;background:var(--brand);animation:ses-kay 1.25s ease-in-out infinite}
-.iskelet{display:grid;gap:9px}
-.iskelet i{display:block;height:11px;border-radius:6px;background:color-mix(in srgb,var(--text) 10%,transparent);animation:ses-nabiz 1.4s ease-in-out infinite}
-.iskelet i:nth-child(2){width:88%;animation-delay:.12s}.iskelet i:nth-child(3){width:64%;animation-delay:.24s}
-#yuklemeNot{color:var(--muted);font-size:14px}
-@keyframes ses-kay{to{left:100%}}
-@keyframes ses-nabiz{50%{opacity:.45}}
-@media (prefers-reduced-motion:reduce){.yukleme-cubuk::after{left:0;width:45%;animation:none}.iskelet i{animation:none}}
-.ses-not{background:var(--warn-soft);color:var(--text);border-radius:12px;padding:12px 14px;font-size:15px}
-</style>
 </head>
 <body>
 <header class="top"><div class="wrap" data-nosnippet>
@@ -57,31 +26,8 @@
 
 <main class="page"><div class="wrap narrow">
   <h1>Sesini duyur</h1>
-  <p>Yapay zekâ senin için ölçülü bir taslak hazırlar. Kendi durumuna göre düzenle, uygun bulursan kendi hesabından paylaş.</p>
-
-  <section class="ses-kart" aria-labelledby="metin-baslik">
-    <div class="ses-guncel" id="guncel" hidden><b>Güncel hashtagler</b><div id="guncelListe"></div></div>
-    <label id="metin-baslik" for="metin">Paylaşım taslağı</label>
-    <div class="metin-kutu">
-      <textarea id="metin" maxlength="600" placeholder="Taslak hazırlanıyor…" disabled></textarea>
-      <div id="yukleme" aria-hidden="true">
-        <div id="yuklemeAdim">Hazırlanıyor…</div>
-        <div class="yukleme-cubuk"></div>
-        <div class="iskelet"><i></i><i></i><i></i></div>
-        <div id="yuklemeNot">Sana özel taslak birkaç saniye içinde gelecek.</div>
-      </div>
-    </div>
-    <div class="ses-alt"><span id="durum" role="status">Hazırlanıyor…</span><span id="sayac">0 / 280</span></div>
-    <div class="ses-dugmeler">
-      <button class="ana" id="paylas" type="button" disabled>X'te aç</button>
-      <button id="kopyala" type="button" disabled>Kopyala</button>
-      <button id="yenile" type="button" disabled>Başka metin</button>
-    </div>
-    <div id="dogrulama"></div>
-  </section>
-
-  <p class="ses-not"><strong>Paylaşmadan önce oku.</strong> Metni yapay zekâ üretir ve hata yapabilir. Paylaşım senin sorumluluğundadır. Kişi ya da kurumları suçlayan, doğrulanmamış bilgi içeren ifadeler ekleme. Aynı metni tekrar tekrar paylaşma.</p>
-  <p style="color:var(--muted);font-size:15px">Bu sayfa hukuki ya da yatırım tavsiyesi vermez. Yazdığın metin bize gönderilmez ve kaydedilmez. Bot koruması için Cloudflare kullanılır, ayrıntılar <a href="gizlilik.html">Gizlilik</a> sayfasında.</p>
+  <p>Bu bölüm geçici olarak kapalı.</p>
+  <p><a href="./">Ana sayfaya dön</a></p>
 </div></main>
 
 <footer><div class="wrap">
@@ -94,133 +40,5 @@
   <div>Hukuki ya da yatırım tavsiyesi değildir. Resmî bilgi için KAP ve SPK duyurularını esas al.</div>
 </div></footer>
 
-<script>
-(() => {
-  const yerel = ["localhost", "127.0.0.1"].includes(location.hostname);
-  const API = yerel ? "http://localhost:8787/api/metin" : "https://ses-api.fondefterim.com/api/metin";
-  const TURNSTILE_SITE = "0x4AAAAAAGNrGXhFnut_wte2";
-  const $ = (id) => document.getElementById(id);
-  let widget = null, bekleyen = null;
-
-  const ADIMLAR = [[0, "Güvenlik kontrolü yapılıyor…"], [1400, "Güncel hashtagler alınıyor…"], [3200, "Metnin yazılıyor…"], [9000, "Son kontroller yapılıyor…"]];
-  let adimZaman = [];
-  function yuklemeBitir() {
-    adimZaman.forEach(clearTimeout);
-    adimZaman = [];
-    $("yukleme").hidden = true;
-  }
-  function yuklemeBasla() {
-    yuklemeBitir();
-    $("yukleme").hidden = false;
-    adimZaman = ADIMLAR.map(([sure, yazi]) => setTimeout(() => { $("yuklemeAdim").textContent = yazi; }, sure));
-  }
-  async function etiketleriGoster() {
-    try {
-      const r = await fetch(API.replace("/metin", "/etiketler"));
-      const v = r.ok ? await r.json() : null;
-      if (!v?.etiketler?.length) return;
-      $("guncelListe").replaceChildren(...v.etiketler.map((e) => { const s = document.createElement("span"); s.textContent = e; return s; }));
-      $("guncel").hidden = false;
-    } catch {}
-  }
-  function mesgul(evet, yazi) {
-    $("yenile").disabled = evet;
-    $("metin").disabled = evet;
-    const bos = evet || !$("metin").value.trim();
-    $("paylas").disabled = bos;
-    $("kopyala").disabled = bos;
-    if (yazi !== undefined) $("durum").textContent = yazi;
-  }
-  function say() {
-    const kutu = $("metin");
-    kutu.style.height = "auto";
-    kutu.style.height = Math.max(270, kutu.scrollHeight + 2) + "px";
-    const n = [...$("metin").value].length;
-    $("sayac").textContent = n + " / 280";
-    $("sayac").classList.toggle("asim", n > 280);
-    const bos = !$("metin").value.trim();
-    if (!$("metin").disabled) { $("paylas").disabled = bos || n > 280; $("kopyala").disabled = bos; }
-  }
-  function dogrulamaBitti(tur, deger) {
-    if (!bekleyen) return;
-    const b = bekleyen;
-    bekleyen = null;
-    clearTimeout(b.sure);
-    tur === "tamam" ? b.coz(deger) : b.red(new Error("dogrulama"));
-  }
-  function sureBaslat() {
-    if (!bekleyen) return;
-    clearTimeout(bekleyen.sure);
-    bekleyen.sure = setTimeout(() => dogrulamaBitti("hata"), 20000);
-  }
-  function dogrulamaAl() {
-    if (yerel) return Promise.resolve("yerel");
-    return new Promise((coz, red) => {
-      bekleyen = { coz, red, sure: null };
-      sureBaslat();
-      try {
-        if (widget === null) {
-          widget = turnstile.render("#dogrulama", {
-            sitekey: TURNSTILE_SITE, appearance: "interaction-only", language: "tr",
-            callback: (t) => dogrulamaBitti("tamam", t),
-            "error-callback": () => { dogrulamaBitti("hata"); return true; },
-            "expired-callback": () => dogrulamaBitti("hata"),
-            "timeout-callback": () => dogrulamaBitti("hata"),
-            "unsupported-callback": () => dogrulamaBitti("hata"),
-            "before-interactive-callback": () => {
-              if (bekleyen) clearTimeout(bekleyen.sure);
-              yuklemeBitir();
-              $("durum").textContent = "Devam etmek için aşağıdaki doğrulamayı tamamla.";
-            },
-            "after-interactive-callback": () => { yuklemeBasla(); sureBaslat(); },
-          });
-        } else {
-          turnstile.reset(widget);
-        }
-      } catch {
-        dogrulamaBitti("hata");
-      }
-    });
-  }
-  async function getir() {
-    yuklemeBasla();
-    mesgul(true, "Hazırlanıyor…");
-    try {
-      const token = await dogrulamaAl();
-      const r = await fetch(API, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ token }) });
-      const v = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(v.hata || "Metin hazırlanamadı. Biraz sonra tekrar dene.");
-      if (v.durum === "bos") {
-        $("metin").value = "";
-        mesgul(false, "Şu anda aktif bir konu yok.");
-      } else {
-        $("metin").value = v.metin;
-        mesgul(false, v.kaynak === "yeni" ? "Yeni taslak hazır." : "Daha önce hazırlanan bir taslak gösteriliyor.");
-      }
-    } catch (e) {
-      mesgul(false, e.message === "dogrulama" ? "Doğrulama tamamlanamadı. Başka metin düğmesiyle tekrar dene." : (e instanceof TypeError ? "Bağlantı kurulamadı. Tekrar dene." : e.message));
-    }
-    yuklemeBitir();
-    say();
-  }
-  $("metin").addEventListener("input", say);
-  $("yenile").addEventListener("click", getir);
-  $("kopyala").addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText($("metin").value); $("durum").textContent = "Kopyalandı."; }
-    catch { $("metin").select(); $("durum").textContent = "Seçili metni kopyalayabilirsin."; }
-  });
-  $("paylas").addEventListener("click", () => {
-    window.open("https://x.com/intent/post?text=" + encodeURIComponent($("metin").value), "_blank", "noopener,noreferrer");
-  });
-  etiketleriGoster();
-  if (yerel) { getir(); return; }
-  const s = document.createElement("script");
-  s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-  s.async = true;
-  s.onload = getir;
-  s.onerror = () => { mesgul(false, "Doğrulama yüklenemedi. Sayfayı yenile."); $("yenile").disabled = true; };
-  document.head.append(s);
-})();
-</script>
 </body>
 </html>
