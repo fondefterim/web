@@ -24,6 +24,14 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script>document.documentElement.classList.replace("no-js","js")</script>
 <link rel="stylesheet" href="stil.css?v=20261120b">
+<style>
+/* App Store QR kodu: yalnızca fareli büyük ekranlarda (bilgisayar) görünür; telefonda gizli. */
+.qr-masaustu { display: none; }
+@media (hover: hover) and (pointer: fine) and (min-width: 900px) {
+  .qr-masaustu { display: inline-flex; align-items: center; gap: 12px; color: rgba(255,255,255,.9); font-size: 14px; line-height: 1.35; text-decoration: none; }
+  .qr-masaustu img { width: 84px; height: 84px; background: #fff; border-radius: 10px; padding: 4px; image-rendering: pixelated; }
+}
+</style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebSite","name":"Fon Defterim","alternateName":"Fon Defterim – Tasfiye Takibi","url":"https://fondefterim.com/","inLanguage":"tr-TR",
  "description":"SPK kararıyla tasfiyeye giren fonların yatırımcıları için ücretsiz hesap defteri: net yatırım, tasfiyeden gelen ödemeler ve kalan alacak. Genel bir fon fiyatı ya da getiri sitesi değildir; yalnızca tasfiyedeki fonları kapsar. Türkiye'deki fon mağdurları için, mağdurlar tarafından.",
@@ -75,6 +83,10 @@
         <div class="store-row">
           <a class="store-badge-official" id="storeBadge" href="https://apps.apple.com/app/id6836281635" rel="noopener">
             <img src="img/app-store-rozet.svg" width="151" height="40" alt="App Store'dan İndirin">
+          </a>
+          <a class="qr-masaustu" href="https://apps.apple.com/app/id6836281635" rel="noopener">
+            <img src="img/qr-app-store.png" width="84" height="84" alt="App Store sayfası için QR kod">
+            <span>Telefonunla tara,<br>App Store'da aç</span>
           </a>
           <ul class="checks">
             <li>Üyelik yok</li><li>İnternetsiz çalışır</li><li>Veri toplanmaz</li>
