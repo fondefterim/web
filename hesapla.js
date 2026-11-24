@@ -2,238 +2,28 @@
 // tarayıcının internete herhangi bir veri göndermesini zaten engeller. PDF için yalnızca sitenin kendi pdf.js kopyası kullanılır.
 (function () {
   'use strict';
-  const MAX_FILE = 15 * 1024 * 1024;     // yüklenecek dosya
-  const MAX_PART = 60 * 1024 * 1024;     // açılmış tek bir parça (sıkıştırma bombasına karşı)
-  const MAX_ROWS = 20000;
   const CUTOFF = 20260916;                // 16.09.2026
+  // Dosya okuma ve sütun tahmini ortak dosyada (ice-aktar.js; web defteri de aynısını kullanır).
+  const IA = window.FonIceAktar;
+  const { MAX_FILE, norm, num, dateKey, showDate, side, fundCode, readXLSX, readCSV, headerRow, isFundType, isTL } = IA;
+  const guess = (rows, h) => IA.guess(rows, h, 'trades');
 
   const $ = id => document.getElementById(id);
   const money = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const tl = v => money.format(Math.round(v * 100) / 100) + ' TL';
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-  // ---------- Metin ve sayı yardımcıları ----------
-  const norm = s => String(s == null ? '' : s).toLocaleLowerCase('tr-TR').replace(/ı/g, 'i')
-    .normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
-
-  function num(v) {
-    if (typeof v === 'number') return isFinite(v) ? v : null;
-    let s = String(v == null ? '' : v).replace(/\s|TL|₺/gi, '');
-    if (!s) return null;
-    const neg = /^\(.*\)$/.test(s) || /^-/.test(s);
-    s = s.replace(/[()\-+]/g, '');
-    const lc = s.lastIndexOf(','), ld = s.lastIndexOf('.');
-    if (lc >= 0 && ld >= 0) s = lc > ld ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
-    else if (lc >= 0) s = (s.match(/,/g).length > 1) ? s.replace(/,/g, '') : s.replace(',', '.');
-    else if ((s.match(/\./g) || []).length > 1 || /^\d{1,3}\.\d{3}$/.test(s)) s = s.replace(/\./g, '');
-    const n = parseFloat(s);
-    if (!isFinite(n)) return null;
-    return neg ? -n : n;
-  }
-
-  // Tarihi yyyymmdd sayısına çevirir (karşılaştırma için).
-  function dateKey(v) {
-    if (typeof v === 'number' && v > 20000 && v < 80000) {
-      const d = new Date(Date.UTC(1899, 11, 30) + Math.round(v) * 86400000);
-      return d.getUTCFullYear() * 10000 + (d.getUTCMonth() + 1) * 100 + d.getUTCDate();
-    }
-    const s = String(v == null ? '' : v).trim();
-    let m = s.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})/);
-    if (m) return +m[3] * 10000 + +m[2] * 100 + +m[1];
-    m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-    if (m) return +m[1] * 10000 + +m[2] * 100 + +m[3];
-    return null;
-  }
-  const showDate = k => k ? `${String(k % 100).padStart(2, '0')}.${String(Math.floor(k / 100) % 100).padStart(2, '0')}.${Math.floor(k / 10000)}` : '';
-
-  function side(v) {
-    const s = norm(v).toUpperCase();
-    if (!s) return null;
-    if (s === 'A' || s === 'B' || s.includes('BUY') || s.includes('SATIN AL')) return 'buy';
-    if (s === 'S' || s.includes('SELL') || s.includes('SAT') || s.includes('IADE') || s.includes('GERI ALIM')) return 'sell';
-    if (s.includes('AL') || s.includes('GIRIS')) return 'buy';
-    return null;
-  }
-
-  function fundCode(v) {
-    const up = String(v == null ? '' : v).toLocaleUpperCase('tr-TR').trim();
-    if (!up) return null;
-    if (/^[A-Z0-9]{2,5}$/.test(up)) return up;
-    const tokens = up.split(/[^A-Z0-9ÇĞİÖŞÜ]+/).filter(Boolean);
-    return tokens.find(t => /^[A-Z0-9]{3}$/.test(t)) || null;
-  }
-
-  // ---------- ZIP (xlsx) okuma ----------
-  async function inflate(bytes) {
-    if (!('DecompressionStream' in window)) throw new Error('Bu tarayıcı Excel dosyasını açamıyor. Güncel bir tarayıcı dene ya da dosyayı CSV olarak kaydet.');
-    const reader = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw')).getReader();
-    const parts = []; let total = 0;
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      total += value.length;
-      if (total > MAX_PART) { reader.cancel(); throw new Error('Dosyanın içi beklenenden çok büyük; açılmadı.'); }
-      parts.push(value);
-    }
-    const all = new Uint8Array(total); let o = 0;
-    for (const p of parts) { all.set(p, o); o += p.length; }
-    return new TextDecoder().decode(all);
-  }
-
-  async function unzip(buf, wanted) {
-    const dv = new DataView(buf), u8 = new Uint8Array(buf), dec = new TextDecoder();
-    let eocd = -1;
-    for (let i = buf.byteLength - 22; i >= Math.max(0, buf.byteLength - 65557); i--) {
-      if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
-    }
-    if (eocd < 0) throw new Error('Bu bir Excel (.xlsx) dosyası gibi görünmüyor.');
-    const count = dv.getUint16(eocd + 10, true);
-    let p = dv.getUint32(eocd + 16, true);
-    const out = {};
-    for (let k = 0; k < count; k++) {
-      if (p + 46 > buf.byteLength || dv.getUint32(p, true) !== 0x02014b50) throw new Error('Excel dosyası okunamadı.');
-      const method = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true);
-      const nlen = dv.getUint16(p + 28, true), elen = dv.getUint16(p + 30, true), clen = dv.getUint16(p + 32, true);
-      const off = dv.getUint32(p + 42, true);
-      const name = dec.decode(u8.subarray(p + 46, p + 46 + nlen));
-      p += 46 + nlen + elen + clen;
-      if (!wanted(name)) continue;
-      const start = off + 30 + dv.getUint16(off + 26, true) + dv.getUint16(off + 28, true);
-      const data = u8.subarray(start, start + csize);
-      if (method === 0) out[name] = dec.decode(data);
-      else if (method === 8) out[name] = await inflate(data);
-    }
-    return out;
-  }
-
-  const xml = s => new DOMParser().parseFromString(s || '<x/>', 'application/xml');
-  const colIndex = ref => { let n = 0; for (const ch of String(ref).replace(/[^A-Z]/gi, '').toUpperCase()) n = n * 26 + ch.charCodeAt(0) - 64; return n - 1; };
-
-  async function readXLSX(buf) {
-    const files = await unzip(buf, n => n === 'xl/workbook.xml' || n === 'xl/_rels/workbook.xml.rels' ||
-      n === 'xl/sharedStrings.xml' || /^xl\/worksheets\/[^/]+\.xml$/.test(n));
-    const wb = xml(files['xl/workbook.xml']);
-    const rels = {};
-    for (const r of xml(files['xl/_rels/workbook.xml.rels']).getElementsByTagName('Relationship')) rels[r.getAttribute('Id')] = r.getAttribute('Target');
-    const strings = [];
-    if (files['xl/sharedStrings.xml']) {
-      for (const si of xml(files['xl/sharedStrings.xml']).getElementsByTagName('si')) {
-        strings.push([...si.getElementsByTagName('t')].map(t => t.textContent).join(''));
-      }
-    }
-    const sheets = [];
-    for (const s of wb.getElementsByTagName('sheet')) {
-      const rid = s.getAttribute('r:id') || [...s.attributes].find(a => a.localName === 'id')?.value;
-      const target = String(rels[rid] || '').replace(/^\//, '').replace(/^xl\//, '');
-      const doc = files['xl/' + target];
-      if (!doc) continue;
-      sheets.push({ name: s.getAttribute('name') || 'Sayfa', rows: sheetRows(xml(doc), strings) });
-    }
-    return sheets;
-  }
-
-  function sheetRows(doc, strings) {
-    const rows = [];
-    let n = 0;
-    for (const r of doc.getElementsByTagName('row')) {
-      if (++n > MAX_ROWS) break;
-      const ri = (parseInt(r.getAttribute('r'), 10) || n) - 1;
-      const row = [];
-      for (const c of r.getElementsByTagName('c')) {
-        const ci = colIndex(c.getAttribute('r') || '');
-        const t = c.getAttribute('t'), v = c.getElementsByTagName('v')[0];
-        let val = null;
-        if (t === 's') val = v ? (strings[parseInt(v.textContent, 10)] ?? '') : '';
-        else if (t === 'inlineStr') val = [...c.getElementsByTagName('t')].map(x => x.textContent).join('');
-        else if (t === 'str' || t === 'e') val = v ? v.textContent : '';
-        else if (v) { const x = parseFloat(v.textContent); val = isFinite(x) ? x : v.textContent; }
-        if (ci >= 0 && ci < 200) row[ci] = val;
-      }
-      rows[ri] = row;
-    }
-    return Array.from(rows, r => r || []);
-  }
-
-  function readCSV(text) {
-    if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
-    const first = text.split(/\r?\n/, 1)[0];
-    const delim = [';', '\t', ','].sort((a, b) => first.split(b).length - first.split(a).length)[0];
-    const rows = []; let row = [], field = '', q = false;
-    for (let i = 0; i < text.length; i++) {
-      const c = text[i];
-      if (q) {
-        if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
-        else field += c;
-      } else if (c === '"') q = true;
-      else if (c === delim) { row.push(field.trim()); field = ''; }
-      else if (c === '\n' || c === '\r') {
-        if (c === '\r' && text[i + 1] === '\n') i++;
-        row.push(field.trim()); field = '';
-        if (row.some(x => x !== '')) rows.push(row);
-        row = [];
-        if (rows.length > MAX_ROWS) break;
-      } else field += c;
-    }
-    row.push(field.trim());
-    if (row.some(x => x !== '')) rows.push(row);
-    return [{ name: 'CSV', rows }];
-  }
-
-  // ---------- Sütun tahmini (uygulamadaki kurallarla aynı) ----------
   const FIELDS = [
     ['date', 'Tarih', true], ['code', 'Fon kodu', true], ['side', 'İşlem (Alış/Satış)', false],
     ['units', 'Adet', false], ['price', 'Birim fiyat', false], ['amount', 'Tutar', false], ['broker', 'Aracı kurum', false],
   ];
-  const KEYS = {
-    date: ['tarih', 'islem tarihi', 'valor', 'date'],
-    code: ['fon kodu', 'kod', 'fon', 'menkul', 'enstruman', 'kiymet', 'varlik', 'urun', 'fund'],
-    side: ['islem', 'islem turu', 'islem tipi', 'islem yonu', 'yon', 'alis/satis', 'alis satis', 'hareket', 'tur', 'tip', 'side', 'type'],
-    units: ['adet', 'miktar', 'pay adedi', 'pay', 'nominal', 'units', 'quantity'],
-    price: ['birim fiyat', 'fiyat', 'price'],
-    amount: ['tutar', 'islem tutari', 'net tutar', 'toplam', 'brut tutar', 'amount'],
-    broker: ['araci kurum', 'araci', 'kurum', 'broker'],
-  };
 
-  function headerRow(rows) {
-    let best = { r: 0, s: 0 };
-    for (let r = 0; r < Math.min(30, rows.length); r++) {
-      const s = (rows[r] || []).filter(c => c != null && Object.values(KEYS).some(ks => ks.some(k => norm(c).includes(k)))).length;
-      if (s > best.s) best = { r, s };
-    }
-    return best.r;
-  }
-
-  function guess(rows, h) {
-    const heads = (rows[h] || []).map(norm);
-    const used = new Set(), m = {};
-    for (const f of ['date', 'price', 'amount', 'units', 'broker', 'code', 'side']) {
-      let best = null;
-      heads.forEach((txt, col) => {
-        if (!txt || used.has(col)) return;
-        const sc = Math.max(0, ...KEYS[f].map(k => txt === k ? 300 + k.length : txt.startsWith(k) ? 200 + k.length : txt.includes(k) ? 100 + k.length : 0));
-        if (sc > 0 && (!best || sc > best.s)) best = { col, s: sc };
-      });
-      if (best) { m[f] = best.col; used.add(best.col); }
-    }
-    return m;
-  }
-
-  // Fon Mağduru Hesap Defteri (v1.3) biçimi: "İşlemler" sayfası 5. satırdan, A tarih B kod C tür D adet E fiyat G not.
+  // Fon Mağduru Hesap Defteri (v1.3) biçimi: ortak okuyucudan gelen işlemler ve ödemeler.
   function v13(sheets) {
-    const t = sheets.find(s => s.name === 'İşlemler'), p = sheets.find(s => s.name === 'Ödemeler');
-    if (!t || !p) return null;
-    const isSample = note => norm(note).includes('ornek');
-    const trades = [], payments = [], skipped = [];
-    t.rows.forEach((r, i) => {
-      if (i < 4 || !r[1]) return;
-      if (isSample(r[6])) return;
-      trades.push({ row: i + 1, date: r[0], code: r[1], side: r[2], units: r[3], price: r[4], amount: null, broker: null });
-    });
-    p.rows.forEach((r, i) => {
-      if (i < 4 || !r[1] || isSample(r[4])) return;
-      const a = num(r[3]); const c = fundCode(r[1]);
-      if (a && c) payments.push({ code: c, amount: Math.abs(a) }); else skipped.push(i + 1);
-    });
+    const r = IA.v13(sheets, new Set((window.FON_LISTESI || []).map(f => f.c)), null);
+    if (!r) return null;
+    const trades = r.trades.map((t, i) => ({ row: i + 1, date: t.day, code: t.code, side: t.side === 'buy' ? 'Alış' : 'Satış', units: t.units, price: t.price, amount: null, broker: null }));
+    const payments = r.payments.map(p => ({ code: fundCode(p.code), amount: Math.abs(p.amount) })).filter(p => p.code && p.amount);
     return { trades, payments };
   }
 
@@ -241,18 +31,7 @@
   let sheets = [], sheetIdx = 0, hRow = 0, map = {}, fixed = null, fileName = '';
   const paidByFund = {};
 
-  // Genel portföy şablonları (hisse, kripto, döviz de içerir): varlık türü ve para birimi sütunu (uygulamayla aynı).
-  function filterCols(rows, h) {
-    const used = new Set(Object.values(map));
-    const heads = (rows[h] || []).map(c => norm(String(c == null ? '' : c).replace(/_/g, ' ')));
-    const find = keys => { const i = heads.findIndex((t, col) => !used.has(col) && keys.some(k => t === k || t.startsWith(k))); return i < 0 ? null : i; };
-    return {
-      asset: find(['varlik tipi', 'varlik turu', 'varlik sinifi', 'urun tipi', 'urun turu', 'enstruman tipi', 'enstruman turu', 'menkul tipi', 'menkul turu', 'kiymet turu', 'asset type', 'asset class']),
-      cur: find(['para birimi', 'doviz cinsi', 'doviz', 'pb', 'currency']),
-    };
-  }
-  const isFundType = v => { const n = norm(v); return !n || n.includes('fon') || n.includes('fund'); };
-  const isTL = v => { const n = norm(v).replace(/\s/g, ''); return !n || ['tl', 'try', '₺', 'turklirasi', 'trl'].includes(n); };
+  const filterCols = (rows, h) => IA.filterCols(rows, h, map);
 
   function rowsToTrades() {
     if (fixed) return fixed.trades;

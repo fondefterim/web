@@ -13,11 +13,13 @@
   const upTR = s => String(s == null ? '' : s).toLocaleUpperCase('tr-TR');
 
   // ---------- PDF → satırlar ----------
+  // Kütüphane bu dosyanın yanındaki vendor/ klasöründen yüklenir (alt klasördeki sayfalar, ör. defter/, için de).
+  const BASE = (document.currentScript && document.currentScript.src) || document.baseURI;
   let lib = null;
   async function pdfjs() {
     if (!lib) {
-      lib = await import('./vendor/pdfjs/pdf.min.mjs');
-      lib.GlobalWorkerOptions.workerSrc = new URL('vendor/pdfjs/pdf.worker.min.mjs', document.baseURI).href;
+      lib = await import(new URL('vendor/pdfjs/pdf.min.mjs', BASE).href);
+      lib.GlobalWorkerOptions.workerSrc = new URL('vendor/pdfjs/pdf.worker.min.mjs', BASE).href;
     }
     return lib;
   }
