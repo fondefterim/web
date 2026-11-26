@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fon Defterim – Tasfiyedeki fonlar için hesap defteri</title>
+<title>Fon Defterim – Net yatırım hesaplama ve fon tasfiyesi takibi</title>
 <meta name="description" content="SPK kararıyla tasfiyeye giren fonların yatırımcıları için: net yatırımını, tasfiyeden gelen ödemeleri ve kalan alacağını tek yerde takip et. Ücretsiz, reklamsız; kayıtların yalnızca cihazında kalır.">
-<meta property="og:title" content="Fon Defterim – Tasfiyedeki fonlar için hesap defteri">
+<meta property="og:title" content="Fon Defterim – Net yatırım hesaplama ve fon tasfiyesi takibi">
 <meta property="og:description" content="Türkiye'deki fon mağdurları için, mağdurlar tarafından. Tasfiyedeki fonlarda net yatırım, gelen ödemeler ve kalan alacak tek yerde.">
 <meta property="og:image" content="https://fondefterim.com/img/paylasim.jpg">
 <meta property="og:image:width" content="1200">
@@ -27,6 +27,9 @@
 <style>
 /* App Store QR kodu: yalnızca fareli büyük ekranlarda (bilgisayar) görünür; telefonda gizli. */
 .qr-masaustu { display: none; }
+/* İndirme düğmeleri tanıtım yazısının hemen altında; hesapla düğmeleri ardından gelir. */
+.hero2-text .store-row { margin-top: 26px; }
+.hero2-text .store-row + .buttons { margin-top: 26px; }
 @media (hover: hover) and (pointer: fine) and (min-width: 900px) {
   .qr-masaustu { display: inline-flex; align-items: center; gap: 12px; color: rgba(255,255,255,.9); font-size: 14px; line-height: 1.35; text-decoration: none; }
   .qr-masaustu img { width: 84px; height: 84px; background: #fff; border-radius: 10px; padding: 4px; image-rendering: pixelated; }
@@ -67,20 +70,6 @@
         <span class="tag-light">Türkiye'deki fon mağdurları için, mağdurlar tarafından</span>
         <h1>Tasfiyedeki fonlarda hesabını sen tut.</h1>
         <p class="lead">Net yatırımın, tasfiyeden gelen ödemeler ve kalan alacağın tek yerde. Ücretsiz, reklamsız; kayıtların yalnızca cihazında kalır.</p>
-        <div class="buttons">
-          <a class="btn light big" href="hesapla.html"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M16 11v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Net yatırımını hemen hesapla</a>
-          <a class="btn glass" href="net-yatirim.html">Nasıl hesaplanır?</a>
-        </div>
-        <form class="fund-find" action="fonlar.html" method="get" role="search" autocomplete="off">
-          <label for="fundFind">Fonunun sayfasını bul</label>
-          <div class="ff-box">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            <input id="fundFind" name="q" type="search" placeholder="Kod ya da ad yaz: TLY, Pusula, Atlas…" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="fundFindList" enterkeyhint="go" spellcheck="false">
-            <button type="submit" aria-label="Fon sayfasını aç"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          </div>
-          <ul id="fundFindList" role="listbox" aria-label="Eşleşen fonlar" hidden></ul>
-          <p class="ff-hint">Durum, 16.09 fiyatı, SPK duyuruları ve KAP belgeleri</p>
-        </form>
         <div class="store-row">
           <a class="store-badge-official" id="storeBadge" href="https://apps.apple.com/app/id6836281635" rel="noopener">
             <img src="img/app-store-rozet.svg" width="151" height="40" alt="App Store'dan İndirin">
@@ -97,6 +86,20 @@
             <li>Üyelik yok</li><li>İnternetsiz çalışır</li><li>Veri toplanmaz</li>
           </ul>
         </div>
+        <div class="buttons">
+          <a class="btn light big" href="hesapla.html"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M16 11v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Net yatırımını hemen hesapla</a>
+          <a class="btn glass" href="net-yatirim.html">Nasıl hesaplanır?</a>
+        </div>
+        <form class="fund-find" action="fonlar.html" method="get" role="search" autocomplete="off">
+          <label for="fundFind">Fonunun sayfasını bul</label>
+          <div class="ff-box">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <input id="fundFind" name="q" type="search" placeholder="Kod ya da ad yaz: TLY, Pusula, Atlas…" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="fundFindList" enterkeyhint="go" spellcheck="false">
+            <button type="submit" aria-label="Fon sayfasını aç"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <ul id="fundFindList" role="listbox" aria-label="Eşleşen fonlar" hidden></ul>
+          <p class="ff-hint">Durum, 16.09 fiyatı, SPK duyuruları ve KAP belgeleri</p>
+        </form>
       </div>
       <div class="devices carousel">
         <div class="phone back" aria-hidden="true"><img src="img/ekran-kolay.jpg" width="598" height="1300" alt=""></div>
@@ -168,6 +171,8 @@
         <a href="hesapla.html"><b>Net yatırımını hesapla</b><span>Excel'ini seç ya da toplamları yaz</span></a>
         <a href="net-yatirim.html"><b>Net yatırım rehberi</b><span>Adım adım hesap ve örnekler</span></a>
         <a href="fonlar.html"><b>Tasfiyedeki fonlar</b><span>Liste, son fiyatlar ve 16.09 değeri hesabı</span></a>
+        <a href="ekstre.html"><b>Ekstreni nasıl alırsın?</b><span>Aracı kurumdan dosyanı indirme adımları</span></a>
+        <a href="ytm-tazmin.html"><b>YTM tazmin başvurusu</b><span>Son gün 30 Aralık; adımlar ve süreç</span></a>
         <a href="dolandiricilik.html"><b>Dolandırıcılara dikkat</b><span>Kimse senden para ya da şifre istemez</span></a>
       </div>
     </div>
